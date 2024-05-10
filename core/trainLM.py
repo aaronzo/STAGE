@@ -1,15 +1,23 @@
 from core.LMs.lm_trainer import LMTrainer
 from core.config import cfg, update_cfg
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 def run(cfg):
     seeds = [cfg.seed] if cfg.seed is not None else range(cfg.runs)
     all_acc = []
     for seed in seeds:
+        logger.info(f"Running seed {seed}...")
         cfg.seed = seed
         trainer = LMTrainer(cfg)
+        logger.info("Trainer loaded!")
+        logger.info("Beginning Training...")
         trainer.train()
+        logger.info("Training Fnished!")
         acc = trainer.eval_and_save()
         all_acc.append(acc)
 
