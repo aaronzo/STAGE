@@ -1,0 +1,7 @@
+gdown==5.1.0
+dgl==2.1.0
+torch==2.2.1
+pandas==2.0.3
+pydantic==2.7.1
+torch-geometric==2.5.3
+accelerate==0.30.0
