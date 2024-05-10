@@ -1,30 +1,23 @@
 
 # PLACEHOLDER README
 
-# Harnessing Explanations: LLM-to-LM Interpreter for Enhanced Text-Attributed Graph Representation Learning
-[![arXiv](https://img.shields.io/badge/arXiv-2305.19523-b31b1b.svg)](https://arxiv.org/abs/2305.19523) [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/explanations-as-features-llm-based-features/node-property-prediction-on-ogbn-arxiv)](https://paperswithcode.com/sota/node-property-prediction-on-ogbn-arxiv?p=explanations-as-features-llm-based-features)
-
-
 <img src="./overview.svg">
 
-## Citation
-```
-@misc{he2023harnessing,
-      title={Harnessing Explanations: LLM-to-LM Interpreter for Enhanced Text-Attributed Graph Representation Learning}, 
-      author={Xiaoxin He and Xavier Bresson and Thomas Laurent and Adam Perold and Yann LeCun and Bryan Hooi},
-      year={2023},
-      eprint={2305.19523},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
-}
-```
 
 ## 0. Python environment setup with Conda
-```
+```bash
 conda create --name TAPE python=3.8
 conda activate TAPE
+# install faster env solver
+conda install -n base conda-libmamba-solver
+conda config --set solver libmamba   # `conda config --set solver classic` to revert
 
-conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.3 -c pytorch
+
+conda install pytorch==1.12.1 -y
+conda install torchvision==0.13.1 -y
+conda install torchaudio==0.12.1 -y
+# conda install cudatoolkit=11.3 -c pytorch
+conda install cudatoolkit=11.3 -c pytorch
 conda install -c pyg pytorch-sparse
 conda install -c pyg pytorch-scatter
 conda install -c pyg pytorch-cluster
@@ -38,6 +31,14 @@ pip install --upgrade accelerate
 
 
 ## 1. Download TAG datasets
+
+Get (A) and (B) by running script:
+
+- ogbn-arxiv  | `bash ogbn_arxiv_orig_download_data.sh`
+- ogbn-products (subset) | NA
+- arxiv_2023 | NA
+- Cora | NA
+- PubMed | NA
 
 ### A. Original text attributes
 
