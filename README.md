@@ -3,8 +3,13 @@
 
 <img src="./overview.svg">
 
+## (Aaron + Jack) Python environment setup with Conda
+```bash
+conda create -n cellotape python=3.8 -y && conda activate cellotape
+pip install -r requirements.txt
+```
 
-## 0. Python environment setup with Conda
+## (ORIGINAL) Python environment setup with Conda
 ```bash
 conda create --name TAPE python=3.8
 conda activate TAPE
