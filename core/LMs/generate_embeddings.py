@@ -10,13 +10,16 @@ from core.data_utils.load import load_data
 from tqdm import tqdm
 import argparse
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate embeddings for input texts and save to disk.")
     parser.add_argument("--dataset_name", type=str, required=True, help="Name of the dataset to process.")
     parser.add_argument("--seed", type=int, required=True, help="Random seed for reproducibility.")
-    parser.add_argument("--emb_dir", type=str, required=True, help="Directory to save the embeddings file.")
+    parser.add_argument("--lm_model_name", type=str, required=False, default='Salesforce/SFR-Embedding-Mistral', help="Model to use for embedding generation.")
     return parser.parse_args()
 
 def last_token_pool(last_hidden_states: torch.Tensor,
@@ -75,16 +78,21 @@ def generate_sfr_embedding_mistral(text, emb_path):
 @torch.no_grad()
 def generate_embeddings_and_save(args):
 
-    os.makedirs(args.emb_dir, exist_ok=True)
+    emb_dir = f"prt_lm/{args.dataset_name}"
+    os.makedirs(emb_dir, exist_ok=True)
 
-    emb_path = f"{args.emb_dir}/{args.dataset_name}.emb"
+    emb_path = f"{emb_dir}/{args.lm_model_name}-seed{args.seed}.emb"
+
+    logger.info(f"Generating embeddings for {args.dataset_name} using model: {args.lm_model_name}")
+    logger.info(f"EMbeddings will be saved to {emb_path}")
 
 
     data, num_classes, text = load_data(
         dataset=args.dataset_name, use_text=True, use_gpt=False, seed=args.seed
     )
 
-    generate_sfr_embedding_mistral(text, emb_path)
+    if args.lm_model_name == 'Salesforce/SFR-Embedding-Mistral':
+        generate_sfr_embedding_mistral(text, emb_path)
 
     print("Embeddings generated and saved successfully.")
 

@@ -45,7 +45,10 @@ PubMed | Download the dataset [here](https://drive.google.com/file/d/166waPAjUwu
 
 ### To just generate and save embeddings
 ```bash
-python -m core.LMs.generate_embeddings --dataset_name ogbn-arxiv --emb_dir embeddings --seed 42 
+python -m core.LMs.generate_embeddings \
+--dataset_name ogbn-arxiv \
+--emb_dir embeddings \
+--seed 42
 ```
 
 
