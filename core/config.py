@@ -54,7 +54,7 @@ def set_cfg(cfg):
     # ------------------------------------------------------------------------ #
     cfg.lm.model = CN()
     # LM model name
-    cfg.lm.model.name = 'microsoft/deberta-base'
+    cfg.lm.model.name =  'microsoft/deberta-base' # 'Salesforce/SFR-Embedding-Mistral'
     cfg.lm.model.feat_shrink = ""
 
     # ------------------------------------------------------------------------ #
