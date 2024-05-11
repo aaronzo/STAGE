@@ -40,21 +40,22 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
             header_dropout_prob,
             output_dir,
             use_peft,
-            peft_r,
-            peft_lora_alpha,
-            peft_lora_dropout
+            peft_r=None,
+            peft_lora_alpha=None,
+            peft_lora_dropout=None
         ):
         super(SalesforceEmbeddingMistralClassifier, self).__init__()
         pretrained_repo = 'Salesforce/SFR-Embedding-Mistral'
         transformers_logging.set_verbosity_error()
         logger.warning(f"inherit model weights from {pretrained_repo}")
-        config = AutoConfig.from_pretrained(pretrained_repo)
-        config.num_labels = num_labels
-        config.header_dropout_prob = header_dropout_prob
-        config.save_pretrained(save_directory=output_dir)
+        self.config = AutoConfig.from_pretrained(pretrained_repo)
+        self.config.num_labels = num_labels
+        self.config.header_dropout_prob = header_dropout_prob
+        self.config.save_pretrained(save_directory=output_dir)
         # init modules
-        self.bert_model = AutoModel.from_pretrained(pretrained_repo, config=config, add_pooling_layer=False)
-        self.head = SentenceClsHead(config)
+        self.model = AutoModel.from_pretrained(pretrained_repo, config=self.config, device_map='auto')
+        logger.info(f"Modle dtype --> {self.model.dtype}")
+        self.head = SentenceClsHead(self.config)
         if use_peft:
             lora_config = LoraConfig(
                 task_type=TaskType.SEQ_CLS,
@@ -63,8 +64,9 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
                 lora_alpha=peft_lora_alpha,
                 lora_dropout=peft_lora_dropout,
             )
-            self.bert_model = PeftModel(self.bert_model, lora_config)
-            self.bert_model.print_trainable_parameters()
+            logger.info('Initialising PEFT Model...')
+            self.model = PeftModel(self.model, lora_config)
+            self.model.print_trainable_parameters()
 
     def last_token_pool(last_hidden_states: torch.Tensor,
                     attention_mask: torch.Tensor) -> torch.Tensor:
@@ -76,9 +78,14 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
             batch_size = last_hidden_states.shape[0]
             return last_hidden_states[torch.arange(batch_size, device=last_hidden_states.device), sequence_lengths]
 
-    def forward(self, input_ids, att_mask, labels=None, return_hidden=False):
-        bert_out = self.bert_model(input_ids=input_ids, attention_mask=att_mask)
-        sentence_embeddings = self.average_pool(bert_out.last_hidden_state, att_mask)
+    def average_pool(self, last_hidden_states, attention_mask):
+        last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
+        return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
+
+    def forward(self, input_ids, attention_mask=None, labels=None, return_hidden=False, preds=None):
+        base_out = self.model(input_ids=input_ids, attention_mask=attention_mask)
+        import ipdb;ipdb.set_trace()
+        sentence_embeddings = self.average_pool(base_out.last_hidden_state, attention_mask)
         out = self.head(sentence_embeddings)
 
         if return_hidden:
@@ -117,13 +124,13 @@ class BertClassifier(PreTrainedModel):
                                     return_dict=return_dict,
                                     output_hidden_states=True)
         # outputs[0]=last hidden state
-        emb = self.dropout(outputs['hidden_states'][-1])
+        emb = self.dropout(outputs['hidden_states'][-1])  # torch.Size([9, 512, 768])
         import ipdb;ipdb.set_trace()
         # Use CLS Emb as sentence emb.
-        cls_token_emb = emb.permute(1, 0, 2)[0]
+        cls_token_emb = emb.permute(1, 0, 2)[0]  # torch.Size([9, 768])
         if self.feat_shrink:
             cls_token_emb = self.feat_shrink_layer(cls_token_emb)
-        logits = self.classifier(cls_token_emb)
+        logits = self.classifier(cls_token_emb) # torch.Size([9, 40])
 
         if labels.shape[-1] == 1:
             labels = labels.squeeze()
