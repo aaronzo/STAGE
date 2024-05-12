@@ -6,6 +6,7 @@ from transformers import (
     AutoTokenizer,
     AutoModel,
 )
+import pandas as pd
 from core.data_utils.load import load_data
 
 from tqdm import tqdm
@@ -47,7 +48,7 @@ def get_detailed_instruct(task_description: str, query: str) -> str:
     return f'Instruct: {task_description}\nQuery: {query}'
 
 
-def generate_sfr_embedding_mistral(text, emb_path):
+def generate_sfr_embedding_mistral(text, emb_path, task_description):
 
     BATCH_SIZE = 64
     max_length = 2048
@@ -65,7 +66,7 @@ def generate_sfr_embedding_mistral(text, emb_path):
         torch_dtype=torch.float16
         )
     
-    task_description = 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts'
+
     logger.info(f"Using instruction <<{task_description}>>")
     text = [get_detailed_instruct(task_description, t) for t in text]
 
@@ -109,13 +110,27 @@ def generate_embeddings_and_save(args):
     logger.info(f"Generating embeddings for {args.dataset_name} using model: {args.lm_model_name}")
     logger.info(f"EMbeddings will be saved to {emb_path}")
 
+    if args.dataset_name == 'ogbn-products':
+        df = pd.read_csv('dataset/ogbn_products_orig/ogbn-products_subset.csv')
+        df['text'] = "Title:\n" + df['title'] + "\nContent:\n " + df['content']
+        text = df['text'].tolist()
+        print(f"ogbn-products example: {text[0]}")
+    else:
+        data, num_classes, text = load_data(
+            dataset=args.dataset_name, use_text=True, use_gpt=False, seed=args.seed
+        )
 
-    data, num_classes, text = load_data(
-        dataset=args.dataset_name, use_text=True, use_gpt=False, seed=args.seed
-    )
+    task_descriptions = {
+        'ogbn-arxiv': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
+        'arxiv_2023': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
+        'cora': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
+        'pubmed': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
+        'ogbn-products': 'Identify the main and secondary category of this product based on the titles and description',
+    }
+    task_description = task_descriptions[args.dataset_name]
 
     if args.lm_model_name == 'Salesforce/SFR-Embedding-Mistral':
-        generate_sfr_embedding_mistral(text, emb_path)
+        generate_sfr_embedding_mistral(text, emb_path, task_description)
 
     print("Embeddings generated and saved successfully.")
 
