@@ -24,6 +24,7 @@ class GNNTrainer():
         self.lr = cfg.gnn.train.lr
         self.feature_type = feature_type
         self.epochs = cfg.gnn.train.epochs
+        self.embedding_dim = cfg.embedding_dim
 
         # ! Load data
         data, num_classes = load_data(
@@ -40,12 +41,12 @@ class GNNTrainer():
             features = data.x
         elif self.feature_type == 'TA':
             print("Loading pretrained LM features (title and abstract) ...")
-            LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seed{self.seed}.emb"
+            LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seed{self.seed}-dim{self.embedding_dim}.emb"
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
                 np.memmap(LM_emb_path, mode='r',
                           dtype=np.float16,
-                          shape=(self.num_nodes, 4096)))
+                          shape=(self.num_nodes, self.embedding_dim)))
             ).to(torch.float32)
             print(f"Embeddings shape: {features.shape}")
         elif self.feature_type == 'E':

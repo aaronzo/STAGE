@@ -25,6 +25,7 @@ class EnsembleTrainer():
 
         # ! Load data
         data, _ = load_data(self.dataset_name, use_dgl=False, use_text=False, seed=cfg.seed)
+        print(f"loaded dataset: {self.dataset_name}")
 
         data.y = data.y.squeeze()
         self.data = data.to(self.device)
