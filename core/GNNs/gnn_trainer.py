@@ -45,8 +45,9 @@ class GNNTrainer():
             features = torch.from_numpy(np.array(
                 np.memmap(LM_emb_path, mode='r',
                           dtype=np.float16,
-                          shape=(self.num_nodes, 768)))
+                          shape=(self.num_nodes, 4096)))
             ).to(torch.float32)
+            print(f"Embeddings shape: {features.shape}")
         elif self.feature_type == 'E':
             print("Loading pretrained LM features (explanations) ...")
             LM_emb_path = f"prt_lm/{self.dataset_name}2/{self.lm_model_name}-seed{self.seed}.emb"
@@ -80,6 +81,7 @@ class GNNTrainer():
         else:
             print(f"Model {self.gnn_model_name} is not supported! Loading MLP ...")
             from core.GNNs.MLP.model import MLP as GNN
+        print(f"Loading model {self.gnn_model_name}...")
 
         self.model = GNN(in_channels=self.hidden_dim*topk if use_pred else self.features.shape[1],
                          hidden_channels=self.hidden_dim,
