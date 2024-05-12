@@ -7,6 +7,10 @@
 ```bash
 conda create -n cellotape python=3.8 -y && conda activate cellotape
 pip install -r requirements.txt
+# if you install a different version of torch, you'll need to modify the below cmds
+# check version by running `import torch; print(torch.__version__)`
+pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-2.2.1+cu121.html
+pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-2.2.1+cu121.html
 ```
 
 
@@ -87,6 +91,10 @@ python -m core.trainGNN gnn.train.feature_type P
 python -m core.trainGNN gnn.train.feature_type ogb
 ```
 
+### (Example) use only TA embeddings from LLM embedding model
+```
+python -m core.trainEnsemble gnn.train.feature_type TA dataset arxiv_2023 seed 42 gnn.model.name SAGE
+```
 
 ## 4. Reproducibility
 Use `run.sh` to run the codes and reproduce the published results.
