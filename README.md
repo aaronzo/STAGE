@@ -14,11 +14,11 @@ pip install -r requirements.txt
 
 Get (A) and (B) by running script:
 
-- ogbn-arxiv  | `bash ogbn_arxiv_orig_download_data.sh`
-- ogbn-products (subset) | NA
-- arxiv_2023 | NA
-- Cora | NA
-- PubMed | NA
+- ogbn-arxiv  | `bash download_scripts/ogbn_arxiv_orig_download_data.sh`
+- ogbn-products (subset) | `bash download_scripts/ogbn_products_download_data.sh`
+- arxiv_2023 | `bash download_scripts/arxiv_2023_download_data.sh`
+- Cora | `bash download_scripts/cora_download_data.sh`
+- PubMed | `bash download_scripts/pubmed_download_data.sh`
 
 ### A. Original text attributes
 
@@ -47,7 +47,6 @@ PubMed | Download the dataset [here](https://drive.google.com/file/d/166waPAjUwu
 ```bash
 python -m core.LMs.generate_embeddings \
 --dataset_name ogbn-arxiv \
---emb_dir embeddings \
 --seed 42
 ```
 
