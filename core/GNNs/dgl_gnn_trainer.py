@@ -24,6 +24,7 @@ class DGLGNNTrainer():
         self.feature_type = feature_type
         self.epochs = cfg.gnn.train.epochs
         self.weight_decay = cfg.gnn.train.weight_decay
+        self.embedding_dim = cfg.embedding_dim
 
         self.n_heads = 3
         self.input_drop = 0.25
@@ -55,21 +56,21 @@ class DGLGNNTrainer():
             features = data.ndata['feat']
         elif self.feature_type == 'TA':
             print("Loading pretrained LM features (title and abstract) ...")
-            LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seed{self.seed}.emb"
+            LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seed{self.seed}-dim{self.embedding_dim}.emb"
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
-                np.memmap(LM_emb_path, mode='r',
+                np.memmap(LM_emb_path, mode='r+',
                           dtype=np.float16,
-                          shape=(self.num_nodes, 768)))
+                          shape=(self.num_nodes, self.embedding_dim)))
             ).to(torch.float32)
         elif self.feature_type == 'E':
             print("Loading pretrained LM features (explanations) ...")
-            LM_emb_path = f"prt_lm/{self.dataset_name}2/{self.lm_model_name}-seed{self.seed}.emb"
+            LM_emb_path = f"prt_lm/{self.dataset_name}2/{self.lm_model_name}-seed{self.seed}-dim{self.embedding_dim}.emb"
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
-                np.memmap(LM_emb_path, mode='r',
+                np.memmap(LM_emb_path, mode='r+',
                           dtype=np.float16,
-                          shape=(self.num_nodes, 768)))
+                          shape=(self.num_nodes, self.embedding_dim)))
             ).to(torch.float32)
         elif self.feature_type == 'P':
             print("Loading top-k prediction features ...")
