@@ -18,7 +18,7 @@ import huggingface_hub
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-logger = logging.getLogger(__name__)    
+logger = logging.getLogger(__name__)
 
 def clear_cuda_cache():
     torch.cuda.empty_cache()
@@ -53,7 +53,7 @@ def generate_gte_qwen_7b_instruct(text, emb_path, task_description):
         return f'Instruct: {task_description}\nQuery: {query}'
 
 
-    BATCH_SIZE = 64
+    BATCH_SIZE = 2
     max_length = 2048
     EMBED_DIM = 4096
     num_nodes = len(text)  # 169343
@@ -72,6 +72,7 @@ def generate_gte_qwen_7b_instruct(text, emb_path, task_description):
 
     logger.info(f"Using instruction <<{task_description}>>")
     text = [get_detailed_instruct(task_description, t) for t in text]
+    text.sort(key=len, reverse=True)
 
 
     for i in tqdm(range(0, len(text), BATCH_SIZE)):
@@ -136,6 +137,7 @@ def generate_sfr_embedding_mistral(text, emb_path, task_description):
 
     logger.info(f"Using instruction <<{task_description}>>")
     text = [get_detailed_instruct(task_description, t) for t in text]
+    text.sort(key=len, reverse=True)
 
 
     for i in tqdm(range(0, len(text), BATCH_SIZE)):
