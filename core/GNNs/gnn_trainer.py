@@ -44,7 +44,7 @@ class GNNTrainer():
             LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seed{self.seed}-dim{self.embedding_dim}.emb"
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
-                np.memmap(LM_emb_path, mode='r+',
+                np.memmap(LM_emb_path, mode='r',
                           dtype=np.float16,
                           shape=(self.num_nodes, self.embedding_dim)))
             ).to(torch.float32)
@@ -54,7 +54,7 @@ class GNNTrainer():
             LM_emb_path = f"prt_lm/{self.dataset_name}2/{self.lm_model_name}-seed{self.seed}-dim{self.embedding_dim}.emb"
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
-                np.memmap(LM_emb_path, mode='r+',
+                np.memmap(LM_emb_path, mode='r',
                           dtype=np.float16,
                           shape=(self.num_nodes, self.embedding_dim)))
             ).to(torch.float32)
