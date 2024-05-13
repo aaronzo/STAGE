@@ -39,7 +39,7 @@ pip install --upgrade accelerate
 
 Get (A) and (B) by running script:
 
-- ogbn-arxiv  | `bash ogbn_arxiv_orig_download_data.sh`
+- ogbn-arxiv  | `bash data_download_scripts/ogbn_arxiv_orig_download_data.sh`
 - ogbn-products (subset) | NA
 - arxiv_2023 | NA
 - Cora | NA
