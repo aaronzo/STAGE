@@ -2,10 +2,12 @@ import torch
 from time import time
 import numpy as np
 
-
+from pathlib import Path
 from core.GNNs.gnn_utils import EarlyStopping
 from core.data_utils.load import load_data, load_gpt_preds
 from core.utils import time_logger
+from gnn.diffusion import SimpleGCNDiffusion, SIGNDiffusion
+import sys
 
 LOG_FREQ = 10
 
@@ -24,6 +26,9 @@ class GNNTrainer():
         self.lr = cfg.gnn.train.lr
         self.feature_type = feature_type
         self.epochs = cfg.gnn.train.epochs
+        self.diffusion = None
+        if self.gnn_model_name in {"SimpleGCN", "SIGN"}:
+            self.diffusion = self.gnn_model_name
 
         # ! Load data
         data, num_classes = load_data(
@@ -65,21 +70,45 @@ class GNNTrainer():
             self.feature_type = 'ogb'
             features = data.x
 
+        if self.diffusion is not None:
+            # TODO params for diffusion
+
+            # print({k: getattr(data, k, None) for k in dir(data) if not k.startswith("_")}, file=sys.stderr)
+            if self.diffusion == "SimpleGCN":
+                features = SimpleGCNDiffusion(3).propagate_torch(
+                    data.edge_index, data.x, cache_location=Path(f"diffusion/{self.dataset_name}/{self.diffusion}.emb")
+                )
+            elif self.diffusion == "SIGN":
+                features = SIGNDiffusion(3, 3, 3).propagate_torch(
+                    data.edge_index, data.x, cache_location=Path(f"diffusion/{self.dataset_name}/{self.diffusion}.emb")
+                )
+
         self.features = features.to(self.device)
         self.data = data.to(self.device)
+
+        if self.diffusion is not None:
+            self.data.edge_index = None  # save GPU mem
 
         # ! Trainer init
         use_pred = self.feature_type == 'P'
 
-        if self.gnn_model_name == "GCN":
-            from core.GNNs.GCN.model import GCN as GNN
-        elif self.gnn_model_name == "SAGE":
-            from core.GNNs.SAGE.model import SAGE as GNN
-        elif self.gnn_model_name == "MLP":
-            from core.GNNs.MLP.model import MLP as GNN
+        if self.diffusion is None:
+            if self.gnn_model_name == "GCN":
+                from core.GNNs.GCN.model import GCN as GNN
+            elif self.gnn_model_name == "SAGE":
+                from core.GNNs.SAGE.model import SAGE as GNN
+            elif self.gnn_model_name == "MLP":
+                from core.GNNs.MLP.model import MLP as GNN
+            else:
+                print(f"Model {self.gnn_model_name} is not supported! Loading MLP ...")
+                from core.GNNs.MLP.model import MLP as GNN
         else:
-            print(f"Model {self.gnn_model_name} is not supported! Loading MLP ...")
-            from core.GNNs.MLP.model import MLP as GNN
+            if self.diffusion == "SimpleGCN":
+                from gnn.simple_gcn import LogisticRegression as GNN
+            elif self.diffusion == "SIGN":
+                from gnn.sign import MLP as GNN
+            else:
+                ValueError("Invalid Diffusion")
 
         self.model = GNN(in_channels=self.hidden_dim*topk if use_pred else self.features.shape[1],
                          hidden_channels=self.hidden_dim,

@@ -5,3 +5,10 @@ pandas==2.0.3
 pydantic==2.7.1
 torch-geometric==2.5.3
 accelerate==0.30.0
+transformers
+yacs
+ogb
+numpy
+pandas
+python-graphblas
+datasets
