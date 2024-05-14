@@ -51,7 +51,7 @@ PubMed | Download the dataset [here](https://drive.google.com/file/d/166waPAjUwu
 ```bash
 # one of ['cora' 'pubmed' 'ogbn-arxiv' 'arxiv_2023' 'ogbn-products']
 python -m core.LMs.generate_embeddings \
---dataset_name ogbn-products \
+--dataset_name ogbn-arxiv \
 --seed 42 \
 --lm_model_name Alibaba-NLP/gte-Qwen1.5-7B-instruct
 ```
