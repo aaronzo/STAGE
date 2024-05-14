@@ -2,7 +2,7 @@ import torch
 from time import time
 import numpy as np
 
-
+from pathlib import Path
 from core.GNNs.gnn_utils import EarlyStopping
 from core.data_utils.load import load_data, load_gpt_preds
 from core.utils import time_logger
@@ -73,11 +73,15 @@ class GNNTrainer():
         if self.diffusion is not None:
             # TODO params for diffusion
 
-            print({k: getattr(data, k, None) for k in dir(data) if not k.startswith("_")}, file=sys.stderr)
+            # print({k: getattr(data, k, None) for k in dir(data) if not k.startswith("_")}, file=sys.stderr)
             if self.diffusion == "SimpleGCN":
-                features = SimpleGCNDiffusion(3).propagate_torch(data.edge_index, data.x)
+                features = SimpleGCNDiffusion(3).propagate_torch(
+                    data.edge_index, data.x, cache_location=Path(f"diffusion/{self.dataset_name}/{self.diffusion}.emb")
+                )
             elif self.diffusion == "SIGN":
-                features = SIGNDiffusion(3, 3, 3).propagate_torch(data.edge_index, data.x)
+                features = SIGNDiffusion(3, 3, 3).propagate_torch(
+                    data.edge_index, data.x, cache_location=Path(f"diffusion/{self.dataset_name}/{self.diffusion}.emb")
+                )
 
         self.features = features.to(self.device)
         self.data = data.to(self.device)
@@ -100,7 +104,7 @@ class GNNTrainer():
                 from core.GNNs.MLP.model import MLP as GNN
         else:
             if self.diffusion == "SimpleGCN":
-                from gnn.simple_gcn import MLP as GNN
+                from gnn.simple_gcn import LogisticRegression as GNN
             elif self.diffusion == "SIGN":
                 from gnn.sign import MLP as GNN
             else:

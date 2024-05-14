@@ -27,8 +27,6 @@ def torch_to_graphblas(
     dtype: "Optional[DTypeLike]" = None,
 ) -> gb.Matrix:
     if edge_index.is_sparse_csr:
-        import sys
-        print("IS SPARSE", file=sys.stderr)
         return torch_sparse_csr_to_graphblas(edge_index, weighted=weighted, dtype=dtype)
     return torch_edge_index_to_graphblas(edge_index, num_nodes=num_nodes, dtype=dtype)
 

@@ -71,10 +71,8 @@ def appnp(adj: gb.Matrix, alpha: float = 0.15, iterations: int = 50) -> np.ndarr
 
 def triangle(adj: gb.Matrix, directed: bool = True) -> gb.Matrix:
     A = gb.select.offdiag(adj).S.new(dtype=adj.dtype)
-    B = gb.select.offdiag(A @ A).new(dtype=adj.dtype)
-
     mask = gb.unary.identity(A.T).S if directed else A.S
-    A(mask=mask) << B
+    A(mask=mask) << A @ A
     return A
 
 
@@ -103,13 +101,13 @@ class Diffusion(metaclass=ABCMeta):
         if cache_location is not None:
             path = Path(cache_location)
             if path.exists() and path.is_file():
-                path.parent.mkdir(parents=True, exist_ok=True)
                 return torch.from_numpy(self._load_emb(path, shape=shape)).to(X.dtype)
         
         adj = _utils.torch_to_graphblas(edge_index, num_nodes=X.shape[0])
         X_np = X.detach().cpu().numpy()
         out = self.propagate(adj, X_np)
         if cache_location is not None:
+            path.parent.mkdir(parents=True, exist_ok=True)
             self._save_emb(out, cache_location, shape)
         return torch.from_numpy(out).to(device=X.device)
 
@@ -170,6 +168,7 @@ class SIGNDiffusion(Diffusion):
 
     def propagate(self, adj: gb.Matrix, X: np.ndarray) -> np.ndarray:
         ops = []
+        print("PROPAGATING SIGN")
         if (s := self.s):
             simple_diffuser = simple(norm(adj, method=self.s_norm))
             ops.append(diffuse_powers(simple_diffuser, X, s))
@@ -177,7 +176,7 @@ class SIGNDiffusion(Diffusion):
             ppr_diffuser = appnp(norm(adj, method=self.p_norm))
             ops.append(diffuse_powers(ppr_diffuser, X, p))
         if (t := self.t):
-            adj_triangle = triangle(adj, directed=False) 
+            adj_triangle = triangle(adj, directed=False)
             triangle_diffuser = simple(norm(adj_triangle, method=self.t_norm, copy=False))
             ops.append(diffuse_powers(triangle_diffuser, X, t))
 

@@ -1,9 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
+from typing import Iterable, Optional, Any, Dict
 from tqdm import tqdm
-
+import warnings
 import torch
+import torch.optim as optim
+import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 
@@ -24,65 +27,82 @@ class SimpleDataset(Dataset):
         return self.x[idx], self.y[idx]
 
 
-class MLP(torch.nn.Module):
+class MLP(nn.Module):
+    convs: Iterable[nn.Linear]
+    piecewise_convs: Optional[Iterable[nn.Linear]]
+    bns: Iterable[nn.BatchNorm1d]
+    piecewise_bns: Optional[Iterable[nn.BatchNorm1d]]
+
     def __init__(
         self,
-        in_channels,
-        hidden_channels,
-        out_channels,
-        num_layers,
-        dropout,
-        piecewise = True,
-    ):
+        *,
+        in_channels: int,
+        hidden_channels: int,
+        out_channels: int,
+        num_layers: int,
+        dropout: float,
+        piecewise = None,
+        **kw
+    ) -> None:
         super(MLP, self).__init__()
-        self.piecewise_conv = self.piecewise_bn = None
-        self.is_piecewise = self.piecewise is not None and self.piecewise > 0
+        if kw:
+            warnings.warn(f"Keyworks passed to {self.__class__.__name__} were ignored: {kw}", stacklevel=0)
+        self.piecewise_convs = self.piecewise_bns = None
+        self.is_piecewise = piecewise is not None and piecewise > 0
         if self.is_piecewise:
-            _in_channels = in_channels // piecewise
+            _in_channels = in_channels // piecewise  # for now this has to perfectly divide. Maybe multiply up instead.
             _hidden_channels = hidden_channels // piecewise
-            self.piecewise_conv = torch.nn.ModuleList(
+            self.piecewise_convs = nn.ModuleList(
                 [torch.nn.Linear(_in_channels, _hidden_channels) for _ in range(piecewise)]
             )
-            self.piecewise_bn = torch.nn.ModuleList(
+            self.piecewise_bns = nn.ModuleList(
                 [torch.nn.BatchNorm1d(_hidden_channels) for _ in range(piecewise)]
             )
-        self.convs = torch.nn.ModuleList(
-            ([] if piecewise else [torch.nn.Linear(in_channels, hidden_channels)]) + 
-            [torch.nn.Linear(hidden_channels, hidden_channels) for _ in range(num_layers - 2)] +
-            [torch.nn.Linear(hidden_channels, out_channels)]
+        self.convs = nn.ModuleList(
+            ([] if piecewise else [nn.Linear(in_channels, hidden_channels)]) + 
+            [nn.Linear(hidden_channels, hidden_channels) for _ in range(num_layers - 2)] +
+            [nn.Linear(hidden_channels, out_channels)]
         )
-        self.bns = torch.nn.ModuleList(
-            [torch.nn.BatchNorm1d(hidden_channels) for _ in range(len(self.convs) - 1)]
+        self.bns = nn.ModuleList(
+            [nn.BatchNorm1d(hidden_channels) for _ in range(len(self.convs) - 1)]
         )
         self.dropout = dropout
         self.piecewise = piecewise
 
-    def reset_parameters(self):
-        for linear in self.convs:
-            linear.reset_parameters()
-        for batch_norm in self.bns:
-            batch_norm.reset_parameters()
-
-    def forward(self, x, **_):
-        pieces = []
+    def reset_parameters(self) -> None:
+        for lin in self.convs:
+            lin.reset_parameters()
+        for bn in self.bns:
+            bn.reset_parameters()
         if self.is_piecewise:
-            for i, (lin, bn) in zip(self.piecewise_conv, self.piecewise_bn):
+            for lin in self.piecewise_convs:
+                lin.reset_parameters()
+            for bn in self.piecewise_bns:
+                bn.reset_parameters()
+
+    def forward(self, x: torch.Tensor, *_) -> torch.Tensor:
+        if self.is_piecewise:
+            pieces = []
+            for i, (lin, bn) in zip(self.piecewise_convs, self.piecewise_bns):
                 start = i * self.piecewise
                 x_piece = lin(x[start : start + self.piecewise])
                 x_piece = bn(x_piece)
+                x = F.relu(x)
+                x = F.dropout(x, p=self.dropout, training=self.training)
                 pieces.append(x_piece)
-    
-        x = torch.cat(pieces)
+            x = torch.cat(pieces)
+
         for lin, bn in zip(self.convs[:-1], self.bns):
             x = lin(x)
             x = bn(x)
             x = F.relu(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
         x = self.convs[-1](x)
-        return torch.log_softmax(x, dim=-1)
+        return x
+         # skip applying softmax as this is done via cross-entropy loss
 
 
-def train(model, device, train_loader, optimizer):
+def train(model: nn.Module, device: Any, train_loader: DataLoader, optimizer: optim.Optimizer) -> float:
     model.train()
 
     total_loss = 0
@@ -98,7 +118,7 @@ def train(model, device, train_loader, optimizer):
 
 
 @torch.no_grad()
-def test(model, device, loader, evaluator):
+def test(model: nn.Module, device: Any, loader: DataLoader, evaluator: Evaluator) -> Dict[str, float]:
     model.eval()
 
     y_pred, y_true = [], []
