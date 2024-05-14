@@ -63,6 +63,11 @@ class EnsembleTrainer():
         res = {'val_acc': val_acc, 'test_acc': test_acc}
         return res
 
+    def ensemble_eval(self, all_pred):
+        pred_ensemble = sum(all_pred)/len(all_pred)
+        acc_ensemble = self.eval(pred_ensemble)
+        return acc_ensemble
+
     def train(self):
         all_pred = []
         all_acc = {}
@@ -76,7 +81,6 @@ class EnsembleTrainer():
                 pred, acc = trainer.eval_and_save()
                 all_pred.append(pred)
                 all_acc[feature_type] = acc
-        pred_ensemble = sum(all_pred)/len(all_pred)
-        acc_ensemble = self.eval(pred_ensemble)
-        all_acc['ensemble'] = acc_ensemble
+            all_acc[f"{feature_type}_ensemble"] = self.ensemble_eval(all_pred)
+        all_acc['ensemble'] = self.ensemble_eval(all_pred)
         return all_acc
