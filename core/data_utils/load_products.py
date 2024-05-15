@@ -49,6 +49,10 @@ def _process():
 
 
 def get_raw_text_products(use_text=False, seed=0):
+    '''
+    Doesn't seem like seed is used for ogbn-products dataset
+    Although this isn't mentioned in the TAPE paper...
+    '''
     data = torch.load('dataset/ogbn_products/ogbn-products_subset.pt')
     text = pd.read_csv('dataset/ogbn_products_orig/ogbn-products_subset.csv')
     text = [f'Product:{ti}; Description: {cont}\n'for ti,

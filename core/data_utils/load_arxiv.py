@@ -5,6 +5,10 @@ import pandas as pd
 
 
 def get_raw_text_arxiv(use_text=False, seed=0):
+    '''
+    It's worth noting that for the ogbn-arxiv dataset, the data split isn't influenced by the seed value.
+    --> https://github.com/XiaoxinHe/TAPE/issues/7#issuecomment-1755821345
+    '''
 
     # dataset = PygNodePropPredDataset(
     #     name='ogbn-arxiv', transform=T.ToSparseTensor())
