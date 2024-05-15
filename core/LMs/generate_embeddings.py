@@ -53,7 +53,7 @@ def generate_gte_qwen_7b_instruct(text, emb_path, task_description):
         return f'Instruct: {task_description}\nQuery: {query}'
 
 
-    BATCH_SIZE = 2
+    BATCH_SIZE = 8
     max_length = 2048
     EMBED_DIM = 4096
     num_nodes = len(text)  # 169343
@@ -72,7 +72,6 @@ def generate_gte_qwen_7b_instruct(text, emb_path, task_description):
 
     logger.info(f"Using instruction <<{task_description}>>")
     text = [get_detailed_instruct(task_description, t) for t in text]
-    text.sort(key=len, reverse=True)
 
 
     for i in tqdm(range(0, len(text), BATCH_SIZE)):
@@ -83,7 +82,7 @@ def generate_gte_qwen_7b_instruct(text, emb_path, task_description):
             padding=True, 
             truncation=True, 
             return_tensors="pt"
-        )
+        ).to('cuda')
         outputs = model(**batch_dict)
         embeddings = last_token_pool(
             outputs.last_hidden_state, batch_dict['attention_mask']
@@ -137,7 +136,6 @@ def generate_sfr_embedding_mistral(text, emb_path, task_description):
 
     logger.info(f"Using instruction <<{task_description}>>")
     text = [get_detailed_instruct(task_description, t) for t in text]
-    text.sort(key=len, reverse=True)
 
 
     for i in tqdm(range(0, len(text), BATCH_SIZE)):
@@ -148,7 +146,7 @@ def generate_sfr_embedding_mistral(text, emb_path, task_description):
             padding=True, 
             truncation=True, 
             return_tensors="pt"
-        )
+        ).to('cuda')
         outputs = model(**batch_dict)
         embeddings = last_token_pool(
             outputs.last_hidden_state, batch_dict['attention_mask']
