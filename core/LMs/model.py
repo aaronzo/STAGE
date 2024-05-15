@@ -84,7 +84,6 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
 
     def forward(self, input_ids, attention_mask=None, labels=None, return_hidden=False, preds=None):
         base_out = self.model(input_ids=input_ids, attention_mask=attention_mask)
-        import ipdb;ipdb.set_trace()
         sentence_embeddings = self.average_pool(base_out.last_hidden_state, attention_mask)
         out = self.head(sentence_embeddings)
 
@@ -125,7 +124,6 @@ class BertClassifier(PreTrainedModel):
                                     output_hidden_states=True)
         # outputs[0]=last hidden state
         emb = self.dropout(outputs['hidden_states'][-1])  # torch.Size([9, 512, 768])
-        import ipdb;ipdb.set_trace()
         # Use CLS Emb as sentence emb.
         cls_token_emb = emb.permute(1, 0, 2)[0]  # torch.Size([9, 768])
         if self.feat_shrink:
