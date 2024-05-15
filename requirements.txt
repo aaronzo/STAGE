@@ -9,3 +9,4 @@ peft==0.10.0
 yacs
 ogb
 flash_attn
+transformers
