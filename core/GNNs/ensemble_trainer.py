@@ -1,4 +1,5 @@
 import torch
+from copy import deepcopy
 
 from core.GNNs.gnn_trainer import GNNTrainer
 from core.GNNs.dgl_gnn_trainer import DGLGNNTrainer
@@ -9,7 +10,8 @@ LOG_FREQ = 10
 
 class EnsembleTrainer():
     def __init__(self, cfg):
-        self.cfg = cfg
+        self.cfg = cfg         
+        self.original_cfg = deepcopy(self.cfg)  # Make a deep copy of the original configuration
         self.device = cfg.device
         self.dataset_name = cfg.dataset
         self.gnn_model_name = cfg.gnn.model.name
@@ -23,10 +25,6 @@ class EnsembleTrainer():
         self.feature_type = cfg.gnn.train.feature_type
         self.epochs = cfg.gnn.train.epochs
         self.weight_decay = cfg.gnn.train.weight_decay
-
-        if cfg.gnn.model.name == 'RevGAT':
-            self.lr = 0.002
-            self.dropout = 0.5
 
         # ! Load data
         data, _ = load_data(self.dataset_name, use_dgl=False, use_text=False, seed=cfg.seed)
@@ -42,10 +40,6 @@ class EnsembleTrainer():
              "y_true": labels.view(-1, 1)}
         )["acc"]
 
-        if cfg.gnn.model.name == 'RevGAT':
-            self.TRAINER = DGLGNNTrainer
-        else:
-            self.TRAINER = GNNTrainer
 
     @ torch.no_grad()
     def _evaluate(self, logits):
@@ -56,31 +50,47 @@ class EnsembleTrainer():
         return val_acc, test_acc
 
     @ torch.no_grad()
-    def eval(self, logits):
+    def eval(self, logits, feature_type):
         val_acc, test_acc = self._evaluate(logits)
         print(
-            f'({self.feature_type}) ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
+            f'({feature_type}) ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
         res = {'val_acc': val_acc, 'test_acc': test_acc}
         return res
 
-    def ensemble_eval(self, all_pred):
+    def ensemble_eval(self, all_pred, feature_type):
         pred_ensemble = sum(all_pred)/len(all_pred)
-        acc_ensemble = self.eval(pred_ensemble)
+        acc_ensemble = self.eval(pred_ensemble, feature_type)
         return acc_ensemble
+
+    def choose_trainer(self, model_type):
+        if model_type == 'RevGAT':
+            print(f"{model_type} model chosen -- using DGLGNNTrainer...")
+            self.cfg.lr = 0.002
+            self.cfg.dropout = 0.5
+            self.TRAINER = DGLGNNTrainer
+        else:
+            self.cfg = deepcopy(self.original_cfg)  # Restore the original configuration
+            self.TRAINER = GNNTrainer
+        
+        self.cfg.gnn.model.name = model_type
 
     def train(self):
         all_pred = []
         all_acc = {}
         feature_types = self.feature_type.split('_')
         model_types = self.gnn_ensemble_models
+        print(f"Training ensemble with models: {model_types}")
         for feature_type in feature_types:
             for model_type in model_types:
-                self.cfg.gnn.model.name = model_type
+                print(f"\n\nTraining model: {model_type} with feature type: {feature_type}\n\n")
+                self.choose_trainer(model_type)
+                self.cfg.gnn.train.feature_type = feature_type
+                print(f"Training model: {model_type} with trainer: {self.TRAINER}\nConfig used: \n{self.cfg.gnn}\n")
                 trainer = self.TRAINER(self.cfg, feature_type)
                 trainer.train()
                 pred, acc = trainer.eval_and_save()
                 all_pred.append(pred)
                 all_acc[feature_type] = acc
-            all_acc[f"{feature_type}_ensemble"] = self.ensemble_eval(all_pred)
-        all_acc['ensemble'] = self.ensemble_eval(all_pred)
+            all_acc[f"{feature_type}_ensemble"] = self.ensemble_eval(all_pred, feature_type=feature_type)
+        all_acc[f'{self.feature_type}_ensemble'] = self.ensemble_eval(all_pred, feature_type=self.feature_type)
         return all_acc
