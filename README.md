@@ -64,8 +64,8 @@ gdown.download_folder('https://drive.google.com/drive/folders/1hzTCaXh6qtZgoOC6_
 # one of ['cora' 'pubmed' 'ogbn-arxiv' 'arxiv_2023' 'ogbn-products']
 python -m core.LMs.generate_embeddings \
 --dataset_name ogbn-arxiv \
---seed 42 \
---lm_model_name Alibaba-NLP/gte-Qwen1.5-7B-instruct
+--lm_model_name Alibaba-NLP/gte-Qwen1.5-7B-instruct \
+--add_instruction   # adds task-specific instruction to text
 ```
 
 
