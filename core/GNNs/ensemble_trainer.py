@@ -81,16 +81,18 @@ class EnsembleTrainer():
         model_types = self.gnn_ensemble_models
         print(f"Training ensemble with models: {model_types}")
         for feature_type in feature_types:
+            feature_pred = []
             for model_type in model_types:
                 print(f"\n\nTraining model: {model_type} with feature type: {feature_type}\n\n")
                 self.choose_trainer(model_type)
                 self.cfg.gnn.train.feature_type = feature_type
-                print(f"Training model: {model_type} with trainer: {self.TRAINER}\nConfig used: \n{self.cfg.gnn}\n")
+                print(f"Config used: \n{self.cfg.gnn}\ntrainer: {self.TRAINER}\n")
                 trainer = self.TRAINER(self.cfg, feature_type)
                 trainer.train()
                 pred, acc = trainer.eval_and_save()
                 all_pred.append(pred)
-                all_acc[feature_type] = acc
-            all_acc[f"{feature_type}_ensemble"] = self.ensemble_eval(all_pred, feature_type=feature_type)
-        all_acc[f'{self.feature_type}_ensemble'] = self.ensemble_eval(all_pred, feature_type=self.feature_type)
+                feature_pred.append(pred)
+                # all_acc[feature_type] = acc
+            all_acc[f"{feature_type}_ensemble"] = self.ensemble_eval(feature_pred, feature_type=f"{feature_type}_ensemble")
+        all_acc[f'{self.feature_type}_ensemble'] = self.ensemble_eval(all_pred, feature_type=f'{self.feature_type}_ensemble')
         return all_acc
