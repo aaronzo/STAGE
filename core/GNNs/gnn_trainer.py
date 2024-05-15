@@ -104,15 +104,14 @@ class GNNTrainer():
             elif self.gnn_model_name == "MLP":
                 from core.GNNs.MLP.model import MLP as GNN
             else:
-                print(f"Model {self.gnn_model_name} is not supported! Loading MLP ...")
-                from core.GNNs.MLP.model import MLP as GNN
+                raise ValueError(f"Invalid Model provided: {self.gnn_model_name}")
         else:
             if self.diffusion == "SimpleGCN":
                 from gnn.simple_gcn import LogisticRegression as GNN
             elif self.diffusion == "SIGN":
                 from gnn.sign import MLP as GNN
             else:
-                ValueError("Invalid Diffusion")
+                raise ValueError(f"Invalid Diffusion provided: {self.diffusion}")
 
 
         self.model = GNN(in_channels=self.hidden_dim*topk if use_pred else self.features.shape[1],
@@ -198,6 +197,6 @@ class GNNTrainer():
         torch.save(self.model.state_dict(), self.ckpt)
         val_acc, test_acc, logits = self._evaluate()
         print(
-            f'[{self.gnn_model_name} + {self.feature_type}] ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
+            f'GNN [{self.gnn_model_name} + {self.feature_type}] ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
         res = {'val_acc': val_acc, 'test_acc': test_acc}
         return logits, res

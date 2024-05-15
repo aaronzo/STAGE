@@ -185,6 +185,6 @@ class DGLGNNTrainer():
         torch.save(self.model.state_dict(), self.ckpt)
         val_acc, test_acc, logits = self._evaluate()
         print(
-            f'[{self.gnn_model_name} + {self.feature_type}] ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
+            f'DGL [{self.gnn_model_name} + {self.feature_type}] ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
         res = {'val_acc': val_acc, 'test_acc': test_acc}
         return logits, res
