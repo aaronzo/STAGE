@@ -49,6 +49,13 @@ PubMed | Download the dataset [here](https://drive.google.com/file/d/166waPAjUwu
 
 ## 2. LM Stage / Generate Embeddings
 
+### To download embeddings
+```python
+# python
+import gdown
+gdown.download_folder('https://drive.google.com/drive/folders/1hzTCaXh6qtZgoOC6_VPVZOBsA_fKcBft?usp=drive_link', quiet=False)
+```
+
 ### To just generate and save embeddings
 ```bash
 # one of ['cora' 'pubmed' 'ogbn-arxiv' 'arxiv_2023' 'ogbn-products']
