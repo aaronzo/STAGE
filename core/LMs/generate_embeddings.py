@@ -117,7 +117,7 @@ def generate_sfr_embedding_mistral(text, emb_path, task_description):
     def get_detailed_instruct(task_description: str, query: str) -> str:
         return f'Instruct: {task_description}\nQuery: {query}'
 
-    BATCH_SIZE = 64
+    BATCH_SIZE = 2
     max_length = 2048
     EMBED_DIM = 4096
     num_nodes = len(text)  # 169343
@@ -193,6 +193,7 @@ def generate_embeddings_and_save(args):
             dataset=args.dataset_name, use_text=True, use_gpt=False, seed=args.seed
         )
 
+    # https://github.com/microsoft/unilm/blob/9c0f1ff7ca53431fe47d2637dfe253643d94185b/e5/utils.py#L142
     task_descriptions = {
         'ogbn-arxiv': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
         'arxiv_2023': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
