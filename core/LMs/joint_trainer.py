@@ -95,8 +95,9 @@ class JointTrainer:
 
         # ---------- Preprocesss -----------
 
+        self.task_description = cfg.lm.task.description
         self.tokenizer = AutoTokenizer.from_pretrained(self.lm_model_name)
-        self.task_description = get_task_description(self.dataset_name)
+        self.task_description = get_task_description(self.dataset_name, task_type=self.task_description)
         self.dataset = preprocess_for_training(
             dataset_name=self.dataset_name,
             tokenizer=self.tokenizer,

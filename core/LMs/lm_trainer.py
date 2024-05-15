@@ -6,6 +6,7 @@ from core.LMs.model import BertClassifier, BertClaInfModel, SalesforceEmbeddingM
 from core.data_utils.dataset import Dataset
 from core.data_utils.load import load_data
 from core.utils import init_path, time_logger
+from core.LMs.utils import get_task_description, get_detailed_instruct
 
 LLMS = {
     'Salesforce/SFR-Embedding-Mistral': SalesforceEmbeddingMistralClassifier,
@@ -44,6 +45,8 @@ class LMTrainer():
         self.ckpt_dir = f'prt_lm/{self.dataset_name}{self.use_gpt_str}/{self.model_name}-seed{self.seed}'
 
         # PEFT settings
+        self.use_llm = self.model_name in LLMS
+        self.task_descriptions = cfg.lm.task.descriptons
         self.use_peft = cfg.use_peft
         self.peft_r = cfg.peft.r
         self.peft_lora_alpha = cfg.peft.lora_alpha
@@ -56,10 +59,13 @@ class LMTrainer():
         self.num_nodes = data.y.size(0)
         self.n_labels = num_classes
 
+        if self.use_llm:
+            task_description = get_task_description(self.dataset_name, task_type=self.task_descriptions)
+            text = [get_detailed_instruct(task_description, t) for t in text]            
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         X = tokenizer(text, padding=True, truncation=True, max_length=512)
 
-        self.dataset = Dataset(X, labels=   data.y.tolist())
+        self.dataset = Dataset(X, labels=data.y.tolist())
         self.inf_dataset = self.dataset
 
         self.train_dataset = torch.utils.data.Subset(

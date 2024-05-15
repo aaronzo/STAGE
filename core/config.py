@@ -71,6 +71,8 @@ def set_cfg(cfg):
     cfg.lm.model.name = 'Salesforce/SFR-Embedding-Mistral'  # 'microsoft/deberta-base' # 
     cfg.lm.model.feat_shrink = ""
     cfg.embedding_dim = 4096
+    cfg.lm.task = CN()
+    cfg.lm.task.descriptions = "default"
 
     # ------------------------------------------------------------------------ #
     # LM Training options
