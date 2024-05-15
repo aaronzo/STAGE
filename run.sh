@@ -1,6 +1,13 @@
-for dataset in 'cora' 'pubmed' 'ogbn-arxiv' 'ariv_2023' 'ogbn-products'
+datasets="${1:-'ogbn-arxiv' 'arxiv_2023' 'ogbn-products'}" 
+seeds="${2:-'0 1 2 3'}"
+
+# for dataset in 'cora' 'pubmed' 'ogbn-arxiv' 'arxiv_2023' 'ogbn-products'
+for dataset in $datasets
 do
-    for seed in 0 1 2 3
+    echo "---------------------------------------"
+    echo "Running pipeline for dataset '$dataset'"
+    echo "---------------------------------------"
+    for seed in $seeds
     do
     WANDB_DISABLED=True TOKENIZERS_PARALLELISM=False CUDA_VISIBLE_DEVICES=0,1,2,3 python -m core.trainLM dataset $dataset seed $seed >> ${dataset}_lm.out
     WANDB_DISABLED=True TOKENIZERS_PARALLELISM=False CUDA_VISIBLE_DEVICES=0,1,2,3 python -m core.trainLM dataset $dataset seed $seed lm.train.use_gpt True  >> ${dataset}_lm2.out

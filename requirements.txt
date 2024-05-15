@@ -6,7 +6,10 @@ pydantic==2.7.1
 torch-geometric==2.5.3
 accelerate==0.30.0
 peft==0.10.0
-yacs
-ogb
 flash_attn
 transformers
+yacs
+ogb
+numpy
+python-graphblas
+datasets

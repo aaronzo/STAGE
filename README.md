@@ -18,11 +18,13 @@ pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-2.2.1+cu121
 
 Get (A) and (B) by running script:
 
+
 - ogbn-arxiv  | `bash download_scripts/ogbn_arxiv_orig_download_data.sh`
 - ogbn-products (subset) | `bash download_scripts/ogbn_products_download_data.sh`
 - arxiv_2023 | `bash download_scripts/arxiv_2023_download_data.sh`
 - Cora | `bash download_scripts/cora_download_data.sh`
 - PubMed | `bash download_scripts/pubmed_download_data.sh`
+
 
 ### A. Original text attributes
 
