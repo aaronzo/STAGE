@@ -20,6 +20,18 @@ def set_cfg(cfg):
     cfg.lm = CN()
 
     # ------------------------------------------------------------------------ #
+    # PEFT Model options
+    # ------------------------------------------------------------------------ #
+    
+    cfg.peft = CN()
+    cfg.use_peft = True
+    cfg.peft.r = 8
+    cfg.peft.lora_alpha = 16
+    cfg.peft.lora_dropout = 0.1
+    cfg.tokenizer = CN()
+    cfg.tokenizer.max_length = 512
+
+    # ------------------------------------------------------------------------ #
     # GNN Model options
     # ------------------------------------------------------------------------ #
     cfg.gnn.model = CN()

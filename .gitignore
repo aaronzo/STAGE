@@ -66,5 +66,7 @@ gpt_preds/
 logs/
 results/
 output/
-prt_lm/
-.vscode/
+
+*.out
+prt_lm
+.vscode

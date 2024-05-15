@@ -43,6 +43,12 @@ class LMTrainer():
         self.output_dir = f'output/{self.dataset_name}{self.use_gpt_str}/{self.model_name}-seed{self.seed}'
         self.ckpt_dir = f'prt_lm/{self.dataset_name}{self.use_gpt_str}/{self.model_name}-seed{self.seed}'
 
+        # PEFT settings
+        self.use_peft = cfg.use_peft
+        self.peft_r = cfg.peft.r
+        self.peft_lora_alpha = cfg.peft.lora_alpha
+        self.peft_lora_dropout = cfg.peft.lora_dropout
+
         # Preprocess data
         data, num_classes, text = load_data(
             dataset=self.dataset_name, use_text=True, use_gpt=cfg.lm.train.use_gpt, seed=self.seed)
@@ -53,7 +59,7 @@ class LMTrainer():
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         X = tokenizer(text, padding=True, truncation=True, max_length=512)
 
-        self.dataset = Dataset(X, data.y.tolist())
+        self.dataset = Dataset(X, labels=   data.y.tolist())
         self.inf_dataset = self.dataset
 
         self.train_dataset = torch.utils.data.Subset(
@@ -62,8 +68,6 @@ class LMTrainer():
             self.dataset, self.data.val_mask.nonzero().squeeze().tolist())
         self.test_dataset = torch.utils.data.Subset(
             self.dataset, self.data.test_mask.nonzero().squeeze().tolist())
-
-
 
     @time_logger
     def train(self):
@@ -75,10 +79,10 @@ class LMTrainer():
                 header_dropout_prob=self.cla_dropout,
                 output_dir=self.output_dir,
                 use_peft=True,
-                peft_r=8,
-                peft_lora_alpha=16,
-                peft_lora_dropout=0.1, # TODO: make these configurable
-                )
+                peft_r=self.peft_r,
+                peft_lora_alpha=self.peft_lora_alpha,
+                peft_lora_dropout=self.peft_lora_dropout,
+            )
         else:
             bert_model = AutoModel.from_pretrained(self.model_name)
             self.model = BertClassifier(bert_model,
