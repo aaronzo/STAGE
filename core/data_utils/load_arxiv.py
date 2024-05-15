@@ -39,7 +39,6 @@ def get_raw_text_arxiv(use_text=False, seed=0):
                         skiprows=1,
                         names=['paper id', 'title', 'abs'],
     )
-    # import ipdb;ipdb.set_trace()
     raw_text['paper id'] = raw_text['paper id'].astype(int, errors='ignore')
     
     df = pd.merge(nodeidx2paperid, raw_text, on='paper id')

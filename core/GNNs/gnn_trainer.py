@@ -26,6 +26,9 @@ class GNNTrainer():
         self.lr = cfg.gnn.train.lr
         self.feature_type = feature_type
         self.epochs = cfg.gnn.train.epochs
+
+        self.embedding_dim = cfg.embedding_dim
+
         self.diffusion = None
         if self.gnn_model_name in {"SimpleGCN", "SIGN"}:
             self.diffusion = self.gnn_model_name
@@ -45,21 +48,22 @@ class GNNTrainer():
             features = data.x
         elif self.feature_type == 'TA':
             print("Loading pretrained LM features (title and abstract) ...")
-            LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seed{self.seed}.emb"
+            LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seed{self.seed}-dim{self.embedding_dim}.emb"
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
                 np.memmap(LM_emb_path, mode='r',
                           dtype=np.float16,
-                          shape=(self.num_nodes, 768)))
+                          shape=(self.num_nodes, self.embedding_dim)))
             ).to(torch.float32)
+            print(f"Embeddings shape: {features.shape}")
         elif self.feature_type == 'E':
             print("Loading pretrained LM features (explanations) ...")
-            LM_emb_path = f"prt_lm/{self.dataset_name}2/{self.lm_model_name}-seed{self.seed}.emb"
+            LM_emb_path = f"prt_lm/{self.dataset_name}2/{self.lm_model_name}-seed{self.seed}-dim{self.embedding_dim}.emb"
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
                 np.memmap(LM_emb_path, mode='r',
                           dtype=np.float16,
-                          shape=(self.num_nodes, 768)))
+                          shape=(self.num_nodes, self.embedding_dim)))
             ).to(torch.float32)
         elif self.feature_type == 'P':
             print("Loading top-k prediction features ...")
@@ -109,6 +113,7 @@ class GNNTrainer():
                 from gnn.sign import MLP as GNN
             else:
                 ValueError("Invalid Diffusion")
+
 
         self.model = GNN(in_channels=self.hidden_dim*topk if use_pred else self.features.shape[1],
                          hidden_channels=self.hidden_dim,

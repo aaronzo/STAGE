@@ -13,6 +13,7 @@ class EnsembleTrainer():
         self.device = cfg.device
         self.dataset_name = cfg.dataset
         self.gnn_model_name = cfg.gnn.model.name
+        self.gnn_ensemble_models = cfg.gnn.ensemble_models
         self.lm_model_name = cfg.lm.model.name
         self.hidden_dim = cfg.gnn.model.hidden_dim
         self.num_layers = cfg.gnn.model.num_layers
@@ -23,8 +24,13 @@ class EnsembleTrainer():
         self.epochs = cfg.gnn.train.epochs
         self.weight_decay = cfg.gnn.train.weight_decay
 
+        if cfg.gnn.model.name == 'RevGAT':
+            self.lr = 0.002
+            self.dropout = 0.5
+
         # ! Load data
         data, _ = load_data(self.dataset_name, use_dgl=False, use_text=False, seed=cfg.seed)
+        print(f"loaded dataset: {self.dataset_name}")
 
         data.y = data.y.squeeze()
         self.data = data.to(self.device)
@@ -57,17 +63,24 @@ class EnsembleTrainer():
         res = {'val_acc': val_acc, 'test_acc': test_acc}
         return res
 
+    def ensemble_eval(self, all_pred):
+        pred_ensemble = sum(all_pred)/len(all_pred)
+        acc_ensemble = self.eval(pred_ensemble)
+        return acc_ensemble
+
     def train(self):
         all_pred = []
         all_acc = {}
         feature_types = self.feature_type.split('_')
+        model_types = self.gnn_ensemble_models
         for feature_type in feature_types:
-            trainer = self.TRAINER(self.cfg, feature_type)
-            trainer.train()
-            pred, acc = trainer.eval_and_save()
-            all_pred.append(pred)
-            all_acc[feature_type] = acc
-        pred_ensemble = sum(all_pred)/len(all_pred)
-        acc_ensemble = self.eval(pred_ensemble)
-        all_acc['ensemble'] = acc_ensemble
+            for model_type in model_types:
+                self.cfg.gnn.model.name = model_type
+                trainer = self.TRAINER(self.cfg, feature_type)
+                trainer.train()
+                pred, acc = trainer.eval_and_save()
+                all_pred.append(pred)
+                all_acc[feature_type] = acc
+            all_acc[f"{feature_type}_ensemble"] = self.ensemble_eval(all_pred)
+        all_acc['ensemble'] = self.ensemble_eval(all_pred)
         return all_acc

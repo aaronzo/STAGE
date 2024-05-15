@@ -2,10 +2,14 @@ import torch
 import numpy as np
 
 from transformers import AutoTokenizer, AutoModel, TrainingArguments, Trainer, IntervalStrategy
-from core.LMs.model import BertClassifier, BertClaInfModel
+from core.LMs.model import BertClassifier, BertClaInfModel, SalesforceEmbeddingMistralClassifier
 from core.data_utils.dataset import Dataset
 from core.data_utils.load import load_data
 from core.utils import init_path, time_logger
+
+LLMS = {
+    'Salesforce/SFR-Embedding-Mistral': SalesforceEmbeddingMistralClassifier,
+    }
 
 
 def compute_metrics(p):
@@ -49,21 +53,37 @@ class LMTrainer():
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         X = tokenizer(text, padding=True, truncation=True, max_length=512)
 
-        dataset = Dataset(X, data.y.tolist())
-        self.inf_dataset = dataset
+        self.dataset = Dataset(X, data.y.tolist())
+        self.inf_dataset = self.dataset
 
         self.train_dataset = torch.utils.data.Subset(
-            dataset, self.data.train_mask.nonzero().squeeze().tolist())
+            self.dataset, self.data.train_mask.nonzero().squeeze().tolist())
         self.val_dataset = torch.utils.data.Subset(
-            dataset, self.data.val_mask.nonzero().squeeze().tolist())
+            self.dataset, self.data.val_mask.nonzero().squeeze().tolist())
         self.test_dataset = torch.utils.data.Subset(
-            dataset, self.data.test_mask.nonzero().squeeze().tolist())
+            self.dataset, self.data.test_mask.nonzero().squeeze().tolist())
+
+
+
+    @time_logger
+    def train(self):
 
         # Define pretrained tokenizer and model
-        bert_model = AutoModel.from_pretrained(self.model_name)
-        self.model = BertClassifier(bert_model,
-                                    n_labels=self.n_labels,
-                                    feat_shrink=self.feat_shrink)
+        if self.model_name in LLMS:
+            self.model = LLMS[self.model_name](
+                num_labels=self.n_labels,
+                header_dropout_prob=self.cla_dropout,
+                output_dir=self.output_dir,
+                use_peft=True,
+                peft_r=8,
+                peft_lora_alpha=16,
+                peft_lora_dropout=0.1, # TODO: make these configurable
+                )
+        else:
+            bert_model = AutoModel.from_pretrained(self.model_name)
+            self.model = BertClassifier(bert_model,
+                                        n_labels=self.n_labels,
+                                        feat_shrink=self.feat_shrink)
 
         # prev_ckpt = f'prt_lm/{self.dataset_name}/{self.model_name}.ckpt'
         # if self.use_gpt_str and os.path.exists(prev_ckpt):
@@ -77,8 +97,7 @@ class LMTrainer():
                                for p in self.model.parameters() if p.requires_grad)
         print(f"\nNumber of parameters: {trainable_params}")
 
-    @time_logger
-    def train(self):
+
         # Define training parameters
         eq_batch_size = self.batch_size * 4
         train_steps = self.num_nodes // eq_batch_size + 1

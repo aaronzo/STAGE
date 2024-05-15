@@ -25,6 +25,8 @@ def set_cfg(cfg):
     cfg.gnn.model = CN()
     # GNN model name
     cfg.gnn.model.name = 'GCN'
+    # for ensembling across model types
+    cfg.gnn.ensemble_models = ['RevGAT', 'GCN', 'SAGE', 'MLP']
     # Number of gnn layers
     cfg.gnn.model.num_layers = 4
     # Hidden size of the model
@@ -54,8 +56,9 @@ def set_cfg(cfg):
     # ------------------------------------------------------------------------ #
     cfg.lm.model = CN()
     # LM model name
-    cfg.lm.model.name = 'microsoft/deberta-base'
+    cfg.lm.model.name = 'Salesforce/SFR-Embedding-Mistral'  # 'microsoft/deberta-base' # 
     cfg.lm.model.feat_shrink = ""
+    cfg.embedding_dim = 4096
 
     # ------------------------------------------------------------------------ #
     # LM Training options

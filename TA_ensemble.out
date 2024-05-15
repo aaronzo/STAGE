@@ -1,0 +1,891 @@
+An import exception occurred
+loaded dataset: ogbn-products
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-products/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([54025, 4096])
+Model RevGAT is not supported! Loading MLP ...
+Loading model RevGAT...
+
+Number of parameters: 564271
+Start running train at 05-14 03:24:34
+Epoch: 0, Time: 0.7092, Loss: 3.9645, TrainAcc: 0.0084, ValAcc: 0.2761, ES: 00/50 | BestVal=0.2761@E0
+Epoch: 10, Time: 0.0511, Loss: 0.9047, TrainAcc: 0.7410, ValAcc: 0.7595, ES: 01/50 | BestVal=0.7691@E9
+Epoch: 20, Time: 0.0615, Loss: 0.7960, TrainAcc: 0.7606, ValAcc: 0.7888, ES: 00/50 | BestVal=0.7888@E20
+Epoch: 30, Time: 0.0527, Loss: 0.7454, TrainAcc: 0.7709, ValAcc: 0.7888, ES: 09/50 | BestVal=0.7945@E21
+Epoch: 40, Time: 0.0529, Loss: 0.7135, TrainAcc: 0.7759, ValAcc: 0.7958, ES: 00/50 | BestVal=0.7958@E40
+Epoch: 50, Time: 0.0522, Loss: 0.6840, TrainAcc: 0.7846, ValAcc: 0.7952, ES: 10/50 | BestVal=0.7958@E40
+Epoch: 60, Time: 0.0532, Loss: 0.6582, TrainAcc: 0.7905, ValAcc: 0.8015, ES: 00/50 | BestVal=0.8015@E60
+Epoch: 70, Time: 0.0582, Loss: 0.6375, TrainAcc: 0.7845, ValAcc: 0.8041, ES: 00/50 | BestVal=0.8041@E70
+Epoch: 80, Time: 0.0546, Loss: 0.6115, TrainAcc: 0.8036, ValAcc: 0.8047, ES: 02/50 | BestVal=0.8060@E78
+Epoch: 90, Time: 0.0609, Loss: 0.5882, TrainAcc: 0.8085, ValAcc: 0.8053, ES: 04/50 | BestVal=0.8060@E86
+Epoch: 100, Time: 0.0585, Loss: 0.5618, TrainAcc: 0.8162, ValAcc: 0.8066, ES: 00/50 | BestVal=0.8066@E100
+Epoch: 110, Time: 0.0580, Loss: 0.5796, TrainAcc: 0.8089, ValAcc: 0.7869, ES: 10/50 | BestVal=0.8066@E100
+Epoch: 120, Time: 0.0534, Loss: 0.5438, TrainAcc: 0.8208, ValAcc: 0.7996, ES: 20/50 | BestVal=0.8066@E100
+Epoch: 130, Time: 0.0545, Loss: 0.5197, TrainAcc: 0.8306, ValAcc: 0.8003, ES: 05/50 | BestVal=0.8130@E125
+Epoch: 140, Time: 0.0585, Loss: 0.5000, TrainAcc: 0.8372, ValAcc: 0.7990, ES: 15/50 | BestVal=0.8130@E125
+Epoch: 150, Time: 0.0584, Loss: 0.5037, TrainAcc: 0.8350, ValAcc: 0.7939, ES: 25/50 | BestVal=0.8130@E125
+Epoch: 160, Time: 0.0567, Loss: 0.5035, TrainAcc: 0.8344, ValAcc: 0.7983, ES: 35/50 | BestVal=0.8130@E125
+Epoch: 170, Time: 0.0603, Loss: 0.4871, TrainAcc: 0.8340, ValAcc: 0.7990, ES: 45/50 | BestVal=0.8130@E125
+Early stopped, loading model from epoch-125
+Finished running train at 05-14 03:24:45, running time = 10.64s.
+[RevGAT + TA] ValAcc: 0.8130, TestAcc: 0.7099
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-products/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([54025, 4096])
+Loading model GCN...
+
+Number of parameters: 564271
+Start running train at 05-14 03:24:46
+Epoch: 0, Time: 0.1091, Loss: 4.2522, TrainAcc: 0.0184, ValAcc: 0.5452, ES: 00/50 | BestVal=0.5452@E0
+Epoch: 10, Time: 0.0687, Loss: 0.7628, TrainAcc: 0.8197, ValAcc: 0.8270, ES: 01/50 | BestVal=0.8282@E9
+Epoch: 20, Time: 0.0747, Loss: 0.6364, TrainAcc: 0.8376, ValAcc: 0.8467, ES: 00/50 | BestVal=0.8467@E20
+Epoch: 30, Time: 0.0708, Loss: 0.5766, TrainAcc: 0.8500, ValAcc: 0.8391, ES: 03/50 | BestVal=0.8537@E27
+Epoch: 40, Time: 0.0774, Loss: 0.5327, TrainAcc: 0.8568, ValAcc: 0.8683, ES: 00/50 | BestVal=0.8683@E40
+Epoch: 50, Time: 0.0734, Loss: 0.5292, TrainAcc: 0.8514, ValAcc: 0.8683, ES: 05/50 | BestVal=0.8721@E45
+Epoch: 60, Time: 0.0708, Loss: 0.4953, TrainAcc: 0.8631, ValAcc: 0.8696, ES: 15/50 | BestVal=0.8721@E45
+Epoch: 70, Time: 0.0703, Loss: 0.4559, TrainAcc: 0.8686, ValAcc: 0.8740, ES: 09/50 | BestVal=0.8753@E61
+Epoch: 80, Time: 0.0750, Loss: 0.4224, TrainAcc: 0.8779, ValAcc: 0.8683, ES: 19/50 | BestVal=0.8753@E61
+Epoch: 90, Time: 0.0744, Loss: 0.3893, TrainAcc: 0.8884, ValAcc: 0.8607, ES: 29/50 | BestVal=0.8753@E61
+Epoch: 100, Time: 0.0746, Loss: 0.3625, TrainAcc: 0.8935, ValAcc: 0.8702, ES: 39/50 | BestVal=0.8753@E61
+Epoch: 110, Time: 0.0729, Loss: 0.3706, TrainAcc: 0.8833, ValAcc: 0.8747, ES: 02/50 | BestVal=0.8804@E108
+Epoch: 120, Time: 0.0684, Loss: 0.3256, TrainAcc: 0.9043, ValAcc: 0.8779, ES: 01/50 | BestVal=0.8861@E119
+Epoch: 130, Time: 0.0715, Loss: 0.3294, TrainAcc: 0.8933, ValAcc: 0.8753, ES: 11/50 | BestVal=0.8861@E119
+Epoch: 140, Time: 0.0727, Loss: 0.2877, TrainAcc: 0.9143, ValAcc: 0.8817, ES: 21/50 | BestVal=0.8861@E119
+Epoch: 150, Time: 0.0726, Loss: 0.2758, TrainAcc: 0.9187, ValAcc: 0.8817, ES: 31/50 | BestVal=0.8861@E119
+Epoch: 160, Time: 0.0758, Loss: 0.2518, TrainAcc: 0.9245, ValAcc: 0.8734, ES: 03/50 | BestVal=0.8880@E157
+Epoch: 170, Time: 0.0708, Loss: 0.2654, TrainAcc: 0.9162, ValAcc: 0.8766, ES: 13/50 | BestVal=0.8880@E157
+Epoch: 180, Time: 0.0757, Loss: 0.2532, TrainAcc: 0.9161, ValAcc: 0.8779, ES: 23/50 | BestVal=0.8880@E157
+Epoch: 190, Time: 0.0713, Loss: 0.2167, TrainAcc: 0.9337, ValAcc: 0.8785, ES: 33/50 | BestVal=0.8880@E157
+Finished running train at 05-14 03:25:00, running time = 14.69s.
+[GCN + TA] ValAcc: 0.8880, TestAcc: 0.7697
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-products/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([54025, 4096])
+Loading model SAGE...
+
+Number of parameters: 1127343
+Start running train at 05-14 03:25:02
+Epoch: 0, Time: 0.2033, Loss: 4.0931, TrainAcc: 0.0074, ValAcc: 0.4364, ES: 00/50 | BestVal=0.4364@E0
+Epoch: 10, Time: 0.1946, Loss: 0.7904, TrainAcc: 0.8094, ValAcc: 0.7875, ES: 00/50 | BestVal=0.7875@E10
+Epoch: 20, Time: 0.1941, Loss: 0.6491, TrainAcc: 0.8276, ValAcc: 0.8270, ES: 00/50 | BestVal=0.8270@E20
+Epoch: 30, Time: 0.1922, Loss: 0.5766, TrainAcc: 0.8448, ValAcc: 0.8448, ES: 02/50 | BestVal=0.8511@E28
+Epoch: 40, Time: 0.1952, Loss: 0.4961, TrainAcc: 0.8621, ValAcc: 0.8734, ES: 00/50 | BestVal=0.8734@E40
+Epoch: 50, Time: 0.1874, Loss: 0.4360, TrainAcc: 0.8750, ValAcc: 0.8715, ES: 05/50 | BestVal=0.8779@E45
+Epoch: 60, Time: 0.1937, Loss: 0.3985, TrainAcc: 0.8861, ValAcc: 0.8747, ES: 04/50 | BestVal=0.8791@E56
+Epoch: 70, Time: 0.1932, Loss: 0.3513, TrainAcc: 0.9022, ValAcc: 0.8836, ES: 02/50 | BestVal=0.8868@E68
+Epoch: 80, Time: 0.1871, Loss: 0.3209, TrainAcc: 0.9059, ValAcc: 0.8791, ES: 03/50 | BestVal=0.8874@E77
+Epoch: 90, Time: 0.1943, Loss: 0.3033, TrainAcc: 0.9120, ValAcc: 0.8963, ES: 00/50 | BestVal=0.8963@E90
+Epoch: 100, Time: 0.1854, Loss: 0.2992, TrainAcc: 0.9172, ValAcc: 0.8957, ES: 01/50 | BestVal=0.8969@E99
+Epoch: 110, Time: 0.1902, Loss: 0.2477, TrainAcc: 0.9284, ValAcc: 0.8957, ES: 06/50 | BestVal=0.8982@E104
+Epoch: 120, Time: 0.1870, Loss: 0.2058, TrainAcc: 0.9393, ValAcc: 0.8906, ES: 16/50 | BestVal=0.8982@E104
+Epoch: 130, Time: 0.1859, Loss: 0.1837, TrainAcc: 0.9466, ValAcc: 0.8696, ES: 26/50 | BestVal=0.8982@E104
+Epoch: 140, Time: 0.1900, Loss: 0.2882, TrainAcc: 0.9045, ValAcc: 0.8766, ES: 09/50 | BestVal=0.8989@E131
+Epoch: 150, Time: 0.1859, Loss: 0.1929, TrainAcc: 0.9465, ValAcc: 0.8880, ES: 19/50 | BestVal=0.8989@E131
+Epoch: 160, Time: 0.1839, Loss: 0.1397, TrainAcc: 0.9601, ValAcc: 0.8931, ES: 29/50 | BestVal=0.8989@E131
+Epoch: 170, Time: 0.1872, Loss: 0.1079, TrainAcc: 0.9706, ValAcc: 0.8963, ES: 04/50 | BestVal=0.8989@E166
+Epoch: 180, Time: 0.1885, Loss: 0.0843, TrainAcc: 0.9791, ValAcc: 0.8919, ES: 14/50 | BestVal=0.8989@E166
+Epoch: 190, Time: 0.1848, Loss: 0.1874, TrainAcc: 0.9445, ValAcc: 0.8861, ES: 24/50 | BestVal=0.8989@E166
+Finished running train at 05-14 03:25:40, running time = 38.02s.
+[SAGE + TA] ValAcc: 0.8989, TestAcc: 0.7975
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-products/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([54025, 4096])
+Loading model MLP...
+
+Number of parameters: 564271
+Start running train at 05-14 03:25:41
+Epoch: 0, Time: 0.0478, Loss: 3.8862, TrainAcc: 0.0233, ValAcc: 0.2729, ES: 00/50 | BestVal=0.2729@E0
+Epoch: 10, Time: 0.0607, Loss: 0.9165, TrainAcc: 0.7381, ValAcc: 0.7735, ES: 00/50 | BestVal=0.7735@E10
+Epoch: 20, Time: 0.0552, Loss: 0.7904, TrainAcc: 0.7620, ValAcc: 0.7735, ES: 01/50 | BestVal=0.7856@E19
+Epoch: 30, Time: 0.0555, Loss: 0.7424, TrainAcc: 0.7728, ValAcc: 0.7875, ES: 00/50 | BestVal=0.7875@E30
+Epoch: 40, Time: 0.0575, Loss: 0.7119, TrainAcc: 0.7802, ValAcc: 0.7933, ES: 02/50 | BestVal=0.7939@E38
+Epoch: 50, Time: 0.0546, Loss: 0.6839, TrainAcc: 0.7863, ValAcc: 0.7939, ES: 01/50 | BestVal=0.8047@E49
+Epoch: 60, Time: 0.0542, Loss: 0.6584, TrainAcc: 0.7919, ValAcc: 0.7939, ES: 11/50 | BestVal=0.8047@E49
+Epoch: 70, Time: 0.0608, Loss: 0.6369, TrainAcc: 0.7852, ValAcc: 0.8034, ES: 21/50 | BestVal=0.8047@E49
+Epoch: 80, Time: 0.0522, Loss: 0.6113, TrainAcc: 0.8044, ValAcc: 0.8015, ES: 02/50 | BestVal=0.8047@E78
+Epoch: 90, Time: 0.0544, Loss: 0.5880, TrainAcc: 0.8104, ValAcc: 0.7913, ES: 12/50 | BestVal=0.8047@E78
+Epoch: 100, Time: 0.0532, Loss: 0.5728, TrainAcc: 0.8032, ValAcc: 0.7888, ES: 22/50 | BestVal=0.8047@E78
+Epoch: 110, Time: 0.0555, Loss: 0.5913, TrainAcc: 0.8090, ValAcc: 0.7812, ES: 32/50 | BestVal=0.8047@E78
+Epoch: 120, Time: 0.0535, Loss: 0.5526, TrainAcc: 0.8204, ValAcc: 0.7964, ES: 42/50 | BestVal=0.8047@E78
+Epoch: 130, Time: 0.0601, Loss: 0.5224, TrainAcc: 0.8300, ValAcc: 0.8003, ES: 07/50 | BestVal=0.8060@E123
+Epoch: 140, Time: 0.0581, Loss: 0.5093, TrainAcc: 0.8321, ValAcc: 0.7971, ES: 17/50 | BestVal=0.8060@E123
+Epoch: 150, Time: 0.0575, Loss: 0.5714, TrainAcc: 0.8179, ValAcc: 0.7971, ES: 04/50 | BestVal=0.8162@E146
+Epoch: 160, Time: 0.0542, Loss: 0.5212, TrainAcc: 0.8302, ValAcc: 0.7990, ES: 14/50 | BestVal=0.8162@E146
+Epoch: 170, Time: 0.0541, Loss: 0.4969, TrainAcc: 0.8371, ValAcc: 0.7990, ES: 24/50 | BestVal=0.8162@E146
+Epoch: 180, Time: 0.0581, Loss: 0.4836, TrainAcc: 0.8408, ValAcc: 0.7983, ES: 34/50 | BestVal=0.8162@E146
+Epoch: 190, Time: 0.0599, Loss: 0.4783, TrainAcc: 0.8419, ValAcc: 0.7971, ES: 44/50 | BestVal=0.8162@E146
+Early stopped, loading model from epoch-146
+Finished running train at 05-14 03:25:52, running time = 11.40s.
+[MLP + TA] ValAcc: 0.8162, TestAcc: 0.7085
+
+(TA) ValAcc: 0.9122, TestAcc: 0.8047
+
+[{'TA': {'val_acc': 0.8161577608142494, 'test_acc': 0.7085441780368261}, 'ensemble': {'val_acc': 0.9122137404580153, 'test_acc': 0.8047423499801298}}]
+Running time: 80.16s
+An import exception occurred
+loaded dataset: ogbn-products
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-products/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([54025, 4096])
+Model RevGAT is not supported! Loading MLP ...
+Loading model RevGAT...
+
+Number of parameters: 564271
+Start running train at 05-14 03:25:58
+Epoch: 0, Time: 0.7199, Loss: 4.0736, TrainAcc: 0.0126, ValAcc: 0.1317, ES: 00/50 | BestVal=0.1317@E0
+Epoch: 10, Time: 0.0591, Loss: 0.9273, TrainAcc: 0.7195, ValAcc: 0.7411, ES: 00/50 | BestVal=0.7411@E10
+Epoch: 20, Time: 0.0561, Loss: 0.7947, TrainAcc: 0.7624, ValAcc: 0.7754, ES: 03/50 | BestVal=0.7824@E17
+Epoch: 30, Time: 0.0594, Loss: 0.7434, TrainAcc: 0.7722, ValAcc: 0.7875, ES: 00/50 | BestVal=0.7875@E30
+Epoch: 40, Time: 0.0593, Loss: 0.7064, TrainAcc: 0.7801, ValAcc: 0.7913, ES: 02/50 | BestVal=0.7933@E38
+Epoch: 50, Time: 0.0618, Loss: 0.6716, TrainAcc: 0.7886, ValAcc: 0.7964, ES: 00/50 | BestVal=0.7964@E50
+Epoch: 60, Time: 0.0546, Loss: 0.6391, TrainAcc: 0.7968, ValAcc: 0.8053, ES: 02/50 | BestVal=0.8060@E58
+Epoch: 70, Time: 0.0554, Loss: 0.6071, TrainAcc: 0.8053, ValAcc: 0.8028, ES: 07/50 | BestVal=0.8060@E63
+Epoch: 80, Time: 0.0528, Loss: 0.5736, TrainAcc: 0.8148, ValAcc: 0.8022, ES: 17/50 | BestVal=0.8060@E63
+Epoch: 90, Time: 0.0594, Loss: 0.5403, TrainAcc: 0.8258, ValAcc: 0.7964, ES: 27/50 | BestVal=0.8060@E63
+Epoch: 100, Time: 0.0578, Loss: 0.5164, TrainAcc: 0.8306, ValAcc: 0.7952, ES: 37/50 | BestVal=0.8060@E63
+Epoch: 110, Time: 0.0566, Loss: 0.5115, TrainAcc: 0.8217, ValAcc: 0.7971, ES: 47/50 | BestVal=0.8060@E63
+Early stopped, loading model from epoch-63
+Finished running train at 05-14 03:26:05, running time = 7.22s.
+[RevGAT + TA] ValAcc: 0.8060, TestAcc: 0.7284
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-products/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([54025, 4096])
+Loading model GCN...
+
+Number of parameters: 564271
+Start running train at 05-14 03:26:06
+Epoch: 0, Time: 0.1103, Loss: 3.9009, TrainAcc: 0.0393, ValAcc: 0.3276, ES: 00/50 | BestVal=0.3276@E0
+Epoch: 10, Time: 0.0746, Loss: 0.7223, TrainAcc: 0.8217, ValAcc: 0.7767, ES: 00/50 | BestVal=0.7767@E10
+Epoch: 20, Time: 0.0790, Loss: 0.6169, TrainAcc: 0.8401, ValAcc: 0.8174, ES: 00/50 | BestVal=0.8174@E20
+Epoch: 30, Time: 0.0691, Loss: 0.5544, TrainAcc: 0.8538, ValAcc: 0.8601, ES: 02/50 | BestVal=0.8626@E28
+Epoch: 40, Time: 0.0744, Loss: 0.5039, TrainAcc: 0.8612, ValAcc: 0.8664, ES: 04/50 | BestVal=0.8677@E36
+Epoch: 50, Time: 0.0711, Loss: 0.4656, TrainAcc: 0.8689, ValAcc: 0.8734, ES: 05/50 | BestVal=0.8753@E45
+Epoch: 60, Time: 0.0712, Loss: 0.5189, TrainAcc: 0.8610, ValAcc: 0.8728, ES: 05/50 | BestVal=0.8760@E55
+Epoch: 70, Time: 0.0675, Loss: 0.4180, TrainAcc: 0.8781, ValAcc: 0.8702, ES: 01/50 | BestVal=0.8772@E69
+Epoch: 80, Time: 0.0750, Loss: 0.3740, TrainAcc: 0.8921, ValAcc: 0.8798, ES: 03/50 | BestVal=0.8836@E77
+Epoch: 90, Time: 0.0699, Loss: 0.3378, TrainAcc: 0.8994, ValAcc: 0.8556, ES: 04/50 | BestVal=0.8938@E86
+Epoch: 100, Time: 0.0709, Loss: 0.3069, TrainAcc: 0.9092, ValAcc: 0.8601, ES: 14/50 | BestVal=0.8938@E86
+Epoch: 110, Time: 0.0706, Loss: 0.2804, TrainAcc: 0.9187, ValAcc: 0.8849, ES: 04/50 | BestVal=0.8944@E106
+Epoch: 120, Time: 0.0695, Loss: 0.2737, TrainAcc: 0.9154, ValAcc: 0.8683, ES: 02/50 | BestVal=0.8976@E118
+Epoch: 130, Time: 0.0731, Loss: 0.2296, TrainAcc: 0.9326, ValAcc: 0.8899, ES: 12/50 | BestVal=0.8976@E118
+Epoch: 140, Time: 0.0753, Loss: 0.2041, TrainAcc: 0.9374, ValAcc: 0.8868, ES: 22/50 | BestVal=0.8976@E118
+Epoch: 150, Time: 0.0756, Loss: 0.2283, TrainAcc: 0.9300, ValAcc: 0.8772, ES: 32/50 | BestVal=0.8976@E118
+Epoch: 160, Time: 0.0747, Loss: 0.1974, TrainAcc: 0.9402, ValAcc: 0.8581, ES: 42/50 | BestVal=0.8976@E118
+Early stopped, loading model from epoch-118
+Finished running train at 05-14 03:26:19, running time = 12.36s.
+[GCN + TA] ValAcc: 0.8976, TestAcc: 0.7744
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-products/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([54025, 4096])
+Loading model SAGE...
+
+Number of parameters: 1127343
+Start running train at 05-14 03:26:20
+Epoch: 0, Time: 0.2052, Loss: 3.8930, TrainAcc: 0.0349, ValAcc: 0.3836, ES: 00/50 | BestVal=0.3836@E0
+Epoch: 10, Time: 0.1825, Loss: 0.7891, TrainAcc: 0.8022, ValAcc: 0.7646, ES: 01/50 | BestVal=0.7672@E9
+Epoch: 20, Time: 0.1933, Loss: 0.6398, TrainAcc: 0.8247, ValAcc: 0.7971, ES: 00/50 | BestVal=0.7971@E20
+Epoch: 30, Time: 0.1932, Loss: 0.5411, TrainAcc: 0.8557, ValAcc: 0.8492, ES: 00/50 | BestVal=0.8492@E30
+Epoch: 40, Time: 0.1870, Loss: 0.5167, TrainAcc: 0.8434, ValAcc: 0.8556, ES: 02/50 | BestVal=0.8715@E38
+Epoch: 50, Time: 0.1893, Loss: 0.4435, TrainAcc: 0.8742, ValAcc: 0.8766, ES: 02/50 | BestVal=0.8791@E48
+Epoch: 60, Time: 0.1885, Loss: 0.3858, TrainAcc: 0.8886, ValAcc: 0.8823, ES: 04/50 | BestVal=0.8842@E56
+Epoch: 70, Time: 0.1880, Loss: 0.3444, TrainAcc: 0.8990, ValAcc: 0.8836, ES: 04/50 | BestVal=0.8855@E66
+Epoch: 80, Time: 0.1959, Loss: 0.3163, TrainAcc: 0.9047, ValAcc: 0.8887, ES: 00/50 | BestVal=0.8887@E80
+Epoch: 90, Time: 0.1985, Loss: 0.2778, TrainAcc: 0.9191, ValAcc: 0.8925, ES: 00/50 | BestVal=0.8925@E90
+Epoch: 100, Time: 0.1919, Loss: 0.2275, TrainAcc: 0.9328, ValAcc: 0.8893, ES: 05/50 | BestVal=0.8995@E95
+Epoch: 110, Time: 0.1914, Loss: 0.2431, TrainAcc: 0.9279, ValAcc: 0.8906, ES: 15/50 | BestVal=0.8995@E95
+Epoch: 120, Time: 0.1929, Loss: 0.1820, TrainAcc: 0.9452, ValAcc: 0.8912, ES: 05/50 | BestVal=0.9020@E115
+Epoch: 130, Time: 0.1949, Loss: 0.1351, TrainAcc: 0.9633, ValAcc: 0.8957, ES: 15/50 | BestVal=0.9020@E115
+Epoch: 140, Time: 0.1929, Loss: 0.1455, TrainAcc: 0.9561, ValAcc: 0.8868, ES: 25/50 | BestVal=0.9020@E115
+Epoch: 150, Time: 0.1934, Loss: 0.0998, TrainAcc: 0.9744, ValAcc: 0.8989, ES: 35/50 | BestVal=0.9020@E115
+Epoch: 160, Time: 0.1878, Loss: 0.0777, TrainAcc: 0.9798, ValAcc: 0.8702, ES: 09/50 | BestVal=0.9020@E151
+Epoch: 170, Time: 0.1869, Loss: 0.1312, TrainAcc: 0.9658, ValAcc: 0.8874, ES: 19/50 | BestVal=0.9020@E151
+Epoch: 180, Time: 0.1885, Loss: 0.0758, TrainAcc: 0.9798, ValAcc: 0.8982, ES: 29/50 | BestVal=0.9020@E151
+Epoch: 190, Time: 0.1859, Loss: 0.0558, TrainAcc: 0.9855, ValAcc: 0.8957, ES: 39/50 | BestVal=0.9020@E151
+Finished running train at 05-14 03:26:58, running time = 38.14s.
+[SAGE + TA] ValAcc: 0.9020, TestAcc: 0.7770
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-products/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([54025, 4096])
+Loading model MLP...
+
+Number of parameters: 564271
+Start running train at 05-14 03:26:59
+Epoch: 0, Time: 0.0510, Loss: 3.9352, TrainAcc: 0.0328, ValAcc: 0.0865, ES: 00/50 | BestVal=0.0865@E0
+Epoch: 10, Time: 0.0609, Loss: 0.9301, TrainAcc: 0.7238, ValAcc: 0.7436, ES: 00/50 | BestVal=0.7436@E10
+Epoch: 20, Time: 0.0618, Loss: 0.7939, TrainAcc: 0.7651, ValAcc: 0.7888, ES: 00/50 | BestVal=0.7888@E20
+Epoch: 30, Time: 0.0615, Loss: 0.7424, TrainAcc: 0.7730, ValAcc: 0.8022, ES: 02/50 | BestVal=0.8028@E28
+Epoch: 40, Time: 0.0598, Loss: 0.7047, TrainAcc: 0.7797, ValAcc: 0.8003, ES: 12/50 | BestVal=0.8028@E28
+Epoch: 50, Time: 0.0600, Loss: 0.6696, TrainAcc: 0.7882, ValAcc: 0.7933, ES: 07/50 | BestVal=0.8073@E43
+Epoch: 60, Time: 0.0585, Loss: 0.6381, TrainAcc: 0.7959, ValAcc: 0.7945, ES: 17/50 | BestVal=0.8073@E43
+Epoch: 70, Time: 0.0596, Loss: 0.6073, TrainAcc: 0.8045, ValAcc: 0.7894, ES: 27/50 | BestVal=0.8073@E43
+Epoch: 80, Time: 0.0602, Loss: 0.5713, TrainAcc: 0.8143, ValAcc: 0.7888, ES: 37/50 | BestVal=0.8073@E43
+Epoch: 90, Time: 0.0535, Loss: 0.5448, TrainAcc: 0.8218, ValAcc: 0.7952, ES: 47/50 | BestVal=0.8073@E43
+Early stopped, loading model from epoch-43
+Finished running train at 05-14 03:27:05, running time = 5.54s.
+[MLP + TA] ValAcc: 0.8073, TestAcc: 0.6975
+
+(TA) ValAcc: 0.9167, TestAcc: 0.7992
+
+[{'TA': {'val_acc': 0.8072519083969466, 'test_acc': 0.6975228507087031}, 'ensemble': {'val_acc': 0.9166666666666666, 'test_acc': 0.7992316863160683}}]
+Running time: 68.6s
+An import exception occurred
+loaded dataset: cora
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/cora/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([2708, 4096])
+Model RevGAT is not supported! Loading MLP ...
+Loading model RevGAT...
+
+Number of parameters: 559111
+Start running train at 05-14 03:27:19
+Epoch: 0, Time: 0.9906, Loss: 1.9726, TrainAcc: 0.1669, ValAcc: 0.1808, ES: 00/50 | BestVal=0.1808@E0
+Epoch: 10, Time: 0.0121, Loss: 0.6978, TrainAcc: 0.7783, ValAcc: 0.6236, ES: 00/50 | BestVal=0.6236@E10
+Epoch: 20, Time: 0.0129, Loss: 0.5573, TrainAcc: 0.8282, ValAcc: 0.7066, ES: 00/50 | BestVal=0.7066@E20
+Epoch: 30, Time: 0.0061, Loss: 0.4623, TrainAcc: 0.8522, ValAcc: 0.7103, ES: 01/50 | BestVal=0.7214@E29
+Epoch: 40, Time: 0.0112, Loss: 0.3314, TrainAcc: 0.8812, ValAcc: 0.7694, ES: 00/50 | BestVal=0.7694@E40
+Epoch: 50, Time: 0.0059, Loss: 0.2270, TrainAcc: 0.9243, ValAcc: 0.7399, ES: 10/50 | BestVal=0.7694@E40
+Epoch: 60, Time: 0.0048, Loss: 0.2256, TrainAcc: 0.9212, ValAcc: 0.7638, ES: 20/50 | BestVal=0.7694@E40
+Epoch: 70, Time: 0.0047, Loss: 0.1104, TrainAcc: 0.9674, ValAcc: 0.7362, ES: 30/50 | BestVal=0.7694@E40
+Epoch: 80, Time: 0.0051, Loss: 0.0604, TrainAcc: 0.9877, ValAcc: 0.7565, ES: 40/50 | BestVal=0.7694@E40
+Epoch: 90, Time: 0.0050, Loss: 0.0375, TrainAcc: 0.9920, ValAcc: 0.7694, ES: 04/50 | BestVal=0.7712@E86
+Epoch: 100, Time: 0.0045, Loss: 0.0159, TrainAcc: 0.9969, ValAcc: 0.7749, ES: 01/50 | BestVal=0.7786@E99
+Epoch: 110, Time: 0.0047, Loss: 0.0067, TrainAcc: 1.0000, ValAcc: 0.7768, ES: 04/50 | BestVal=0.7915@E106
+Epoch: 120, Time: 0.0046, Loss: 0.0035, TrainAcc: 1.0000, ValAcc: 0.7694, ES: 14/50 | BestVal=0.7915@E106
+Epoch: 130, Time: 0.0046, Loss: 0.0021, TrainAcc: 1.0000, ValAcc: 0.7712, ES: 24/50 | BestVal=0.7915@E106
+Epoch: 140, Time: 0.0046, Loss: 0.0015, TrainAcc: 1.0000, ValAcc: 0.7675, ES: 34/50 | BestVal=0.7915@E106
+Epoch: 150, Time: 0.0044, Loss: 0.0012, TrainAcc: 1.0000, ValAcc: 0.7694, ES: 44/50 | BestVal=0.7915@E106
+Early stopped, loading model from epoch-106
+Finished running train at 05-14 03:27:21, running time = 2.01s.
+[RevGAT + TA] ValAcc: 0.7915, TestAcc: 0.7232
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/cora/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([2708, 4096])
+Loading model GCN...
+
+Number of parameters: 559111
+Start running train at 05-14 03:27:25
+Epoch: 0, Time: 0.0219, Loss: 2.3522, TrainAcc: 0.0998, ValAcc: 0.2934, ES: 00/50 | BestVal=0.2934@E0
+Epoch: 10, Time: 0.0150, Loss: 0.4661, TrainAcc: 0.8454, ValAcc: 0.7177, ES: 00/50 | BestVal=0.7177@E10
+Epoch: 20, Time: 0.0132, Loss: 0.3850, TrainAcc: 0.8615, ValAcc: 0.7804, ES: 00/50 | BestVal=0.7804@E20
+Epoch: 30, Time: 0.0130, Loss: 0.3296, TrainAcc: 0.8762, ValAcc: 0.8063, ES: 00/50 | BestVal=0.8063@E30
+Epoch: 40, Time: 0.0118, Loss: 0.2789, TrainAcc: 0.8959, ValAcc: 0.8506, ES: 00/50 | BestVal=0.8506@E40
+Epoch: 50, Time: 0.0118, Loss: 0.2402, TrainAcc: 0.9144, ValAcc: 0.8708, ES: 00/50 | BestVal=0.8708@E50
+Epoch: 60, Time: 0.0116, Loss: 0.2125, TrainAcc: 0.9206, ValAcc: 0.8948, ES: 00/50 | BestVal=0.8948@E60
+Epoch: 70, Time: 0.0063, Loss: 0.1776, TrainAcc: 0.9304, ValAcc: 0.8708, ES: 10/50 | BestVal=0.8948@E60
+Epoch: 80, Time: 0.0072, Loss: 0.1793, TrainAcc: 0.9347, ValAcc: 0.8579, ES: 20/50 | BestVal=0.8948@E60
+Epoch: 90, Time: 0.0063, Loss: 0.1410, TrainAcc: 0.9514, ValAcc: 0.8801, ES: 30/50 | BestVal=0.8948@E60
+Epoch: 100, Time: 0.0062, Loss: 0.1953, TrainAcc: 0.9329, ValAcc: 0.8561, ES: 40/50 | BestVal=0.8948@E60
+Early stopped, loading model from epoch-60
+Finished running train at 05-14 03:27:26, running time = 1.00s.
+[GCN + TA] ValAcc: 0.8948, TestAcc: 0.8690
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/cora/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([2708, 4096])
+Loading model SAGE...
+
+Number of parameters: 1117063
+Start running train at 05-14 03:27:29
+Epoch: 0, Time: 0.0405, Loss: 1.9415, TrainAcc: 0.2654, ValAcc: 0.3708, ES: 00/50 | BestVal=0.3708@E0
+Epoch: 10, Time: 0.0196, Loss: 0.4851, TrainAcc: 0.8294, ValAcc: 0.6328, ES: 01/50 | BestVal=0.6402@E9
+Epoch: 20, Time: 0.0242, Loss: 0.3997, TrainAcc: 0.8553, ValAcc: 0.7509, ES: 00/50 | BestVal=0.7509@E20
+Epoch: 30, Time: 0.0247, Loss: 0.3375, TrainAcc: 0.8762, ValAcc: 0.8173, ES: 00/50 | BestVal=0.8173@E30
+Epoch: 40, Time: 0.0159, Loss: 0.2864, TrainAcc: 0.8953, ValAcc: 0.8432, ES: 01/50 | BestVal=0.8469@E39
+Epoch: 50, Time: 0.0161, Loss: 0.2527, TrainAcc: 0.9113, ValAcc: 0.8506, ES: 04/50 | BestVal=0.8672@E46
+Epoch: 60, Time: 0.0156, Loss: 0.2202, TrainAcc: 0.9193, ValAcc: 0.8635, ES: 02/50 | BestVal=0.8690@E58
+Epoch: 70, Time: 0.0250, Loss: 0.1681, TrainAcc: 0.9427, ValAcc: 0.8708, ES: 00/50 | BestVal=0.8708@E70
+Epoch: 80, Time: 0.0160, Loss: 0.1566, TrainAcc: 0.9458, ValAcc: 0.8506, ES: 03/50 | BestVal=0.8727@E77
+Epoch: 90, Time: 0.0161, Loss: 0.1089, TrainAcc: 0.9643, ValAcc: 0.8616, ES: 08/50 | BestVal=0.8782@E82
+Epoch: 100, Time: 0.0169, Loss: 0.1029, TrainAcc: 0.9661, ValAcc: 0.8690, ES: 18/50 | BestVal=0.8782@E82
+Epoch: 110, Time: 0.0164, Loss: 0.0668, TrainAcc: 0.9797, ValAcc: 0.8635, ES: 28/50 | BestVal=0.8782@E82
+Epoch: 120, Time: 0.0161, Loss: 0.0569, TrainAcc: 0.9865, ValAcc: 0.8616, ES: 38/50 | BestVal=0.8782@E82
+Epoch: 130, Time: 0.0163, Loss: 0.0341, TrainAcc: 0.9926, ValAcc: 0.8598, ES: 48/50 | BestVal=0.8782@E82
+Early stopped, loading model from epoch-82
+Finished running train at 05-14 03:27:32, running time = 2.68s.
+[SAGE + TA] ValAcc: 0.8782, TestAcc: 0.8708
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/cora/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([2708, 4096])
+Loading model MLP...
+
+Number of parameters: 559111
+Start running train at 05-14 03:27:36
+Epoch: 0, Time: 0.0171, Loss: 1.9726, TrainAcc: 0.1669, ValAcc: 0.1808, ES: 00/50 | BestVal=0.1808@E0
+Epoch: 10, Time: 0.0123, Loss: 0.6978, TrainAcc: 0.7783, ValAcc: 0.6236, ES: 00/50 | BestVal=0.6236@E10
+Epoch: 20, Time: 0.0124, Loss: 0.5573, TrainAcc: 0.8282, ValAcc: 0.7066, ES: 00/50 | BestVal=0.7066@E20
+Epoch: 30, Time: 0.0062, Loss: 0.4623, TrainAcc: 0.8522, ValAcc: 0.7103, ES: 01/50 | BestVal=0.7214@E29
+Epoch: 40, Time: 0.0117, Loss: 0.3314, TrainAcc: 0.8812, ValAcc: 0.7694, ES: 00/50 | BestVal=0.7694@E40
+Epoch: 50, Time: 0.0055, Loss: 0.2270, TrainAcc: 0.9243, ValAcc: 0.7399, ES: 10/50 | BestVal=0.7694@E40
+Epoch: 60, Time: 0.0055, Loss: 0.2256, TrainAcc: 0.9212, ValAcc: 0.7638, ES: 20/50 | BestVal=0.7694@E40
+Epoch: 70, Time: 0.0053, Loss: 0.1104, TrainAcc: 0.9674, ValAcc: 0.7362, ES: 30/50 | BestVal=0.7694@E40
+Epoch: 80, Time: 0.0053, Loss: 0.0604, TrainAcc: 0.9877, ValAcc: 0.7565, ES: 40/50 | BestVal=0.7694@E40
+Epoch: 90, Time: 0.0044, Loss: 0.0375, TrainAcc: 0.9920, ValAcc: 0.7694, ES: 04/50 | BestVal=0.7712@E86
+Epoch: 100, Time: 0.0046, Loss: 0.0159, TrainAcc: 0.9969, ValAcc: 0.7749, ES: 01/50 | BestVal=0.7786@E99
+Epoch: 110, Time: 0.0047, Loss: 0.0067, TrainAcc: 1.0000, ValAcc: 0.7768, ES: 04/50 | BestVal=0.7915@E106
+Epoch: 120, Time: 0.0046, Loss: 0.0035, TrainAcc: 1.0000, ValAcc: 0.7694, ES: 14/50 | BestVal=0.7915@E106
+Epoch: 130, Time: 0.0045, Loss: 0.0021, TrainAcc: 1.0000, ValAcc: 0.7712, ES: 24/50 | BestVal=0.7915@E106
+Epoch: 140, Time: 0.0045, Loss: 0.0015, TrainAcc: 1.0000, ValAcc: 0.7675, ES: 34/50 | BestVal=0.7915@E106
+Epoch: 150, Time: 0.0043, Loss: 0.0012, TrainAcc: 1.0000, ValAcc: 0.7694, ES: 44/50 | BestVal=0.7915@E106
+Early stopped, loading model from epoch-106
+Finished running train at 05-14 03:27:37, running time = 1.04s.
+[MLP + TA] ValAcc: 0.7915, TestAcc: 0.7232
+
+(TA) ValAcc: 0.8487, TestAcc: 0.8137
+
+[{'TA': {'val_acc': 0.7915129151291513, 'test_acc': 0.7232472324723247}, 'ensemble': {'val_acc': 0.8487084870848709, 'test_acc': 0.8136531365313653}}]
+Running time: 28.17s
+An import exception occurred
+loaded dataset: cora
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/cora/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([2708, 4096])
+Model RevGAT is not supported! Loading MLP ...
+Loading model RevGAT...
+
+Number of parameters: 559111
+Start running train at 05-14 03:27:51
+Epoch: 0, Time: 0.9779, Loss: 2.0124, TrainAcc: 0.1250, ValAcc: 0.2915, ES: 00/50 | BestVal=0.2915@E0
+Epoch: 10, Time: 0.0129, Loss: 0.6092, TrainAcc: 0.8030, ValAcc: 0.7269, ES: 00/50 | BestVal=0.7269@E10
+Epoch: 20, Time: 0.0071, Loss: 0.4353, TrainAcc: 0.8633, ValAcc: 0.7749, ES: 02/50 | BestVal=0.7804@E18
+Epoch: 30, Time: 0.0057, Loss: 0.2468, TrainAcc: 0.9261, ValAcc: 0.6882, ES: 12/50 | BestVal=0.7804@E18
+Epoch: 40, Time: 0.0057, Loss: 0.1109, TrainAcc: 0.9686, ValAcc: 0.6236, ES: 22/50 | BestVal=0.7804@E18
+Epoch: 50, Time: 0.0057, Loss: 0.0275, TrainAcc: 0.9963, ValAcc: 0.6882, ES: 32/50 | BestVal=0.7804@E18
+Epoch: 60, Time: 0.0059, Loss: 0.0051, TrainAcc: 1.0000, ValAcc: 0.7288, ES: 42/50 | BestVal=0.7804@E18
+Early stopped, loading model from epoch-18
+Finished running train at 05-14 03:27:53, running time = 1.52s.
+[RevGAT + TA] ValAcc: 0.7804, TestAcc: 0.7620
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/cora/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([2708, 4096])
+Loading model GCN...
+
+Number of parameters: 559111
+Start running train at 05-14 03:27:57
+Epoch: 0, Time: 0.0217, Loss: 2.0078, TrainAcc: 0.2555, ValAcc: 0.4207, ES: 00/50 | BestVal=0.4207@E0
+Epoch: 10, Time: 0.0147, Loss: 0.3794, TrainAcc: 0.8639, ValAcc: 0.6513, ES: 00/50 | BestVal=0.6513@E10
+Epoch: 20, Time: 0.0129, Loss: 0.3024, TrainAcc: 0.8898, ValAcc: 0.7841, ES: 00/50 | BestVal=0.7841@E20
+Epoch: 30, Time: 0.0125, Loss: 0.2453, TrainAcc: 0.9144, ValAcc: 0.8395, ES: 00/50 | BestVal=0.8395@E30
+Epoch: 40, Time: 0.0122, Loss: 0.1958, TrainAcc: 0.9261, ValAcc: 0.8727, ES: 00/50 | BestVal=0.8727@E40
+Epoch: 50, Time: 0.0068, Loss: 0.1644, TrainAcc: 0.9372, ValAcc: 0.8893, ES: 02/50 | BestVal=0.8967@E48
+Epoch: 60, Time: 0.0063, Loss: 0.1284, TrainAcc: 0.9563, ValAcc: 0.8690, ES: 09/50 | BestVal=0.8985@E51
+Epoch: 70, Time: 0.0063, Loss: 0.1253, TrainAcc: 0.9520, ValAcc: 0.8672, ES: 19/50 | BestVal=0.8985@E51
+Epoch: 80, Time: 0.0063, Loss: 0.0993, TrainAcc: 0.9649, ValAcc: 0.8598, ES: 29/50 | BestVal=0.8985@E51
+Epoch: 90, Time: 0.0063, Loss: 0.1011, TrainAcc: 0.9587, ValAcc: 0.8690, ES: 39/50 | BestVal=0.8985@E51
+Epoch: 100, Time: 0.0062, Loss: 0.0729, TrainAcc: 0.9754, ValAcc: 0.8579, ES: 49/50 | BestVal=0.8985@E51
+Early stopped, loading model from epoch-51
+Finished running train at 05-14 03:27:58, running time = 0.95s.
+[GCN + TA] ValAcc: 0.8985, TestAcc: 0.8764
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/cora/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([2708, 4096])
+Loading model SAGE...
+
+Number of parameters: 1117063
+Start running train at 05-14 03:28:01
+Epoch: 0, Time: 0.0421, Loss: 1.9542, TrainAcc: 0.2094, ValAcc: 0.3653, ES: 00/50 | BestVal=0.3653@E0
+Epoch: 10, Time: 0.0203, Loss: 0.4236, TrainAcc: 0.8547, ValAcc: 0.7454, ES: 07/50 | BestVal=0.7768@E3
+Epoch: 20, Time: 0.0159, Loss: 0.3303, TrainAcc: 0.8775, ValAcc: 0.8247, ES: 01/50 | BestVal=0.8266@E19
+Epoch: 30, Time: 0.0251, Loss: 0.2528, TrainAcc: 0.9033, ValAcc: 0.8616, ES: 00/50 | BestVal=0.8616@E30
+Epoch: 40, Time: 0.0263, Loss: 0.1898, TrainAcc: 0.9292, ValAcc: 0.8838, ES: 00/50 | BestVal=0.8838@E40
+Epoch: 50, Time: 0.0165, Loss: 0.1345, TrainAcc: 0.9581, ValAcc: 0.8801, ES: 07/50 | BestVal=0.8893@E43
+Epoch: 60, Time: 0.0166, Loss: 0.0885, TrainAcc: 0.9741, ValAcc: 0.8782, ES: 17/50 | BestVal=0.8893@E43
+Epoch: 70, Time: 0.0163, Loss: 0.0490, TrainAcc: 0.9901, ValAcc: 0.8764, ES: 27/50 | BestVal=0.8893@E43
+Epoch: 80, Time: 0.0163, Loss: 0.0255, TrainAcc: 0.9963, ValAcc: 0.8764, ES: 37/50 | BestVal=0.8893@E43
+Epoch: 90, Time: 0.0162, Loss: 0.0178, TrainAcc: 0.9963, ValAcc: 0.8745, ES: 47/50 | BestVal=0.8893@E43
+Early stopped, loading model from epoch-43
+Finished running train at 05-14 03:28:03, running time = 1.89s.
+[SAGE + TA] ValAcc: 0.8893, TestAcc: 0.8782
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/cora/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([2708, 4096])
+Loading model MLP...
+
+Number of parameters: 559111
+Start running train at 05-14 03:28:07
+Epoch: 0, Time: 0.0173, Loss: 2.0124, TrainAcc: 0.1250, ValAcc: 0.2915, ES: 00/50 | BestVal=0.2915@E0
+Epoch: 10, Time: 0.0121, Loss: 0.6092, TrainAcc: 0.8030, ValAcc: 0.7269, ES: 00/50 | BestVal=0.7269@E10
+Epoch: 20, Time: 0.0066, Loss: 0.4353, TrainAcc: 0.8633, ValAcc: 0.7749, ES: 02/50 | BestVal=0.7804@E18
+Epoch: 30, Time: 0.0066, Loss: 0.2468, TrainAcc: 0.9261, ValAcc: 0.6882, ES: 12/50 | BestVal=0.7804@E18
+Epoch: 40, Time: 0.0064, Loss: 0.1109, TrainAcc: 0.9686, ValAcc: 0.6236, ES: 22/50 | BestVal=0.7804@E18
+Epoch: 50, Time: 0.0048, Loss: 0.0275, TrainAcc: 0.9963, ValAcc: 0.6882, ES: 32/50 | BestVal=0.7804@E18
+Epoch: 60, Time: 0.0047, Loss: 0.0051, TrainAcc: 1.0000, ValAcc: 0.7288, ES: 42/50 | BestVal=0.7804@E18
+Early stopped, loading model from epoch-18
+Finished running train at 05-14 03:28:08, running time = 0.54s.
+[MLP + TA] ValAcc: 0.7804, TestAcc: 0.7620
+
+(TA) ValAcc: 0.8948, TestAcc: 0.8745
+
+[{'TA': {'val_acc': 0.7804428044280443, 'test_acc': 0.7619926199261993}, 'ensemble': {'val_acc': 0.8948339483394834, 'test_acc': 0.8745387453874539}}]
+Running time: 26.81s
+An import exception occurred
+loaded dataset: pubmed
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/pubmed/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([19717, 4096])
+Model RevGAT is not supported! Loading MLP ...
+Loading model RevGAT...
+
+Number of parameters: 558595
+Start running train at 05-14 03:28:20
+Epoch: 0, Time: 1.0225, Loss: 1.1788, TrainAcc: 0.2731, ValAcc: 0.4055, ES: 00/50 | BestVal=0.4055@E0
+Epoch: 10, Time: 0.0199, Loss: 0.5155, TrainAcc: 0.7876, ValAcc: 0.7309, ES: 03/50 | BestVal=0.7375@E7
+Epoch: 20, Time: 0.0202, Loss: 0.4294, TrainAcc: 0.8330, ValAcc: 0.6949, ES: 13/50 | BestVal=0.7375@E7
+Epoch: 30, Time: 0.0181, Loss: 0.3733, TrainAcc: 0.8542, ValAcc: 0.8204, ES: 02/50 | BestVal=0.8237@E28
+Epoch: 40, Time: 0.0204, Loss: 0.3318, TrainAcc: 0.8720, ValAcc: 0.8007, ES: 12/50 | BestVal=0.8237@E28
+Epoch: 50, Time: 0.0260, Loss: 0.3183, TrainAcc: 0.8760, ValAcc: 0.8384, ES: 00/50 | BestVal=0.8384@E50
+Epoch: 60, Time: 0.0228, Loss: 0.2866, TrainAcc: 0.8893, ValAcc: 0.8669, ES: 00/50 | BestVal=0.8669@E60
+Epoch: 70, Time: 0.0206, Loss: 0.2826, TrainAcc: 0.8896, ValAcc: 0.8346, ES: 09/50 | BestVal=0.8674@E61
+Epoch: 80, Time: 0.0195, Loss: 0.2562, TrainAcc: 0.9014, ValAcc: 0.8696, ES: 01/50 | BestVal=0.8722@E79
+Epoch: 90, Time: 0.0188, Loss: 0.2419, TrainAcc: 0.9073, ValAcc: 0.8565, ES: 02/50 | BestVal=0.8732@E88
+Epoch: 100, Time: 0.0199, Loss: 0.2394, TrainAcc: 0.9075, ValAcc: 0.8405, ES: 12/50 | BestVal=0.8732@E88
+Epoch: 110, Time: 0.0207, Loss: 0.2219, TrainAcc: 0.9170, ValAcc: 0.8724, ES: 05/50 | BestVal=0.8755@E105
+Epoch: 120, Time: 0.0201, Loss: 0.2048, TrainAcc: 0.9234, ValAcc: 0.8458, ES: 09/50 | BestVal=0.8785@E111
+Epoch: 130, Time: 0.0201, Loss: 0.2657, TrainAcc: 0.8994, ValAcc: 0.7877, ES: 19/50 | BestVal=0.8785@E111
+Epoch: 140, Time: 0.0204, Loss: 0.2296, TrainAcc: 0.9123, ValAcc: 0.8719, ES: 29/50 | BestVal=0.8785@E111
+Epoch: 150, Time: 0.0285, Loss: 0.1990, TrainAcc: 0.9254, ValAcc: 0.8823, ES: 00/50 | BestVal=0.8823@E150
+Epoch: 160, Time: 0.0192, Loss: 0.1855, TrainAcc: 0.9314, ValAcc: 0.8623, ES: 09/50 | BestVal=0.8874@E151
+Epoch: 170, Time: 0.0201, Loss: 0.2449, TrainAcc: 0.9075, ValAcc: 0.8610, ES: 19/50 | BestVal=0.8874@E151
+Epoch: 180, Time: 0.0205, Loss: 0.1848, TrainAcc: 0.9332, ValAcc: 0.8836, ES: 29/50 | BestVal=0.8874@E151
+Epoch: 190, Time: 0.0188, Loss: 0.1682, TrainAcc: 0.9370, ValAcc: 0.8646, ES: 03/50 | BestVal=0.8963@E187
+Finished running train at 05-14 03:28:25, running time = 5.27s.
+[RevGAT + TA] ValAcc: 0.8963, TestAcc: 0.8938
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/pubmed/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([19717, 4096])
+Loading model GCN...
+
+Number of parameters: 558595
+Start running train at 05-14 03:28:27
+Epoch: 0, Time: 0.0616, Loss: 1.4623, TrainAcc: 0.1981, ValAcc: 0.5351, ES: 00/50 | BestVal=0.5351@E0
+Epoch: 10, Time: 0.0342, Loss: 0.5658, TrainAcc: 0.7746, ValAcc: 0.6614, ES: 01/50 | BestVal=0.7040@E9
+Epoch: 20, Time: 0.0359, Loss: 0.5087, TrainAcc: 0.8047, ValAcc: 0.6145, ES: 11/50 | BestVal=0.7040@E9
+Epoch: 30, Time: 0.0399, Loss: 0.4622, TrainAcc: 0.8194, ValAcc: 0.7771, ES: 00/50 | BestVal=0.7771@E30
+Epoch: 40, Time: 0.0329, Loss: 0.4298, TrainAcc: 0.8347, ValAcc: 0.7953, ES: 01/50 | BestVal=0.8017@E39
+Epoch: 50, Time: 0.0332, Loss: 0.4032, TrainAcc: 0.8464, ValAcc: 0.8159, ES: 02/50 | BestVal=0.8192@E48
+Epoch: 60, Time: 0.0349, Loss: 0.3829, TrainAcc: 0.8549, ValAcc: 0.8126, ES: 01/50 | BestVal=0.8280@E59
+Epoch: 70, Time: 0.0348, Loss: 0.3666, TrainAcc: 0.8630, ValAcc: 0.8075, ES: 02/50 | BestVal=0.8392@E68
+Epoch: 80, Time: 0.0346, Loss: 0.3661, TrainAcc: 0.8633, ValAcc: 0.8108, ES: 07/50 | BestVal=0.8438@E73
+Epoch: 90, Time: 0.0364, Loss: 0.3545, TrainAcc: 0.8674, ValAcc: 0.8308, ES: 17/50 | BestVal=0.8438@E73
+Epoch: 100, Time: 0.0350, Loss: 0.3515, TrainAcc: 0.8650, ValAcc: 0.7705, ES: 02/50 | BestVal=0.8527@E98
+Epoch: 110, Time: 0.0349, Loss: 0.3224, TrainAcc: 0.8801, ValAcc: 0.6444, ES: 12/50 | BestVal=0.8527@E98
+Epoch: 120, Time: 0.0359, Loss: 0.3360, TrainAcc: 0.8720, ValAcc: 0.7697, ES: 22/50 | BestVal=0.8527@E98
+Epoch: 130, Time: 0.0344, Loss: 0.3327, TrainAcc: 0.8780, ValAcc: 0.6561, ES: 32/50 | BestVal=0.8527@E98
+Epoch: 140, Time: 0.0349, Loss: 0.3125, TrainAcc: 0.8830, ValAcc: 0.8412, ES: 06/50 | BestVal=0.8534@E134
+Epoch: 150, Time: 0.0354, Loss: 0.3182, TrainAcc: 0.8825, ValAcc: 0.7497, ES: 09/50 | BestVal=0.8580@E141
+Epoch: 160, Time: 0.0356, Loss: 0.3011, TrainAcc: 0.8865, ValAcc: 0.8088, ES: 19/50 | BestVal=0.8580@E141
+Epoch: 170, Time: 0.0354, Loss: 0.2889, TrainAcc: 0.8904, ValAcc: 0.8177, ES: 29/50 | BestVal=0.8580@E141
+Epoch: 180, Time: 0.0358, Loss: 0.2907, TrainAcc: 0.8931, ValAcc: 0.8204, ES: 39/50 | BestVal=0.8580@E141
+Epoch: 190, Time: 0.0359, Loss: 0.3079, TrainAcc: 0.8826, ValAcc: 0.8291, ES: 49/50 | BestVal=0.8580@E141
+Early stopped, loading model from epoch-141
+Finished running train at 05-14 03:28:34, running time = 6.94s.
+[GCN + TA] ValAcc: 0.8580, TestAcc: 0.8623
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/pubmed/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([19717, 4096])
+Loading model SAGE...
+
+Number of parameters: 1116035
+Start running train at 05-14 03:28:36
+Epoch: 0, Time: 0.1822, Loss: 1.1836, TrainAcc: 0.3063, ValAcc: 0.4514, ES: 00/50 | BestVal=0.4514@E0
+Epoch: 10, Time: 0.1275, Loss: 0.5595, TrainAcc: 0.7684, ValAcc: 0.6700, ES: 00/50 | BestVal=0.6700@E10
+Epoch: 20, Time: 0.1244, Loss: 0.5122, TrainAcc: 0.7954, ValAcc: 0.7581, ES: 00/50 | BestVal=0.7581@E20
+Epoch: 30, Time: 0.1299, Loss: 0.4586, TrainAcc: 0.8179, ValAcc: 0.7667, ES: 00/50 | BestVal=0.7667@E30
+Epoch: 40, Time: 0.1244, Loss: 0.4134, TrainAcc: 0.8380, ValAcc: 0.8093, ES: 00/50 | BestVal=0.8093@E40
+Epoch: 50, Time: 0.1208, Loss: 0.3777, TrainAcc: 0.8517, ValAcc: 0.8083, ES: 10/50 | BestVal=0.8093@E40
+Epoch: 60, Time: 0.1296, Loss: 0.3470, TrainAcc: 0.8646, ValAcc: 0.8298, ES: 00/50 | BestVal=0.8298@E60
+Epoch: 70, Time: 0.1245, Loss: 0.3193, TrainAcc: 0.8753, ValAcc: 0.8506, ES: 00/50 | BestVal=0.8506@E70
+Epoch: 80, Time: 0.1197, Loss: 0.3592, TrainAcc: 0.8544, ValAcc: 0.8511, ES: 02/50 | BestVal=0.8620@E78
+Epoch: 90, Time: 0.1186, Loss: 0.2969, TrainAcc: 0.8888, ValAcc: 0.7885, ES: 12/50 | BestVal=0.8620@E78
+Epoch: 100, Time: 0.1205, Loss: 0.2646, TrainAcc: 0.9014, ValAcc: 0.8580, ES: 22/50 | BestVal=0.8620@E78
+Epoch: 110, Time: 0.1204, Loss: 0.2412, TrainAcc: 0.9079, ValAcc: 0.8040, ES: 08/50 | BestVal=0.8707@E102
+Epoch: 120, Time: 0.1223, Loss: 0.2582, TrainAcc: 0.9012, ValAcc: 0.7761, ES: 18/50 | BestVal=0.8707@E102
+Epoch: 130, Time: 0.1220, Loss: 0.2240, TrainAcc: 0.9146, ValAcc: 0.8473, ES: 28/50 | BestVal=0.8707@E102
+Epoch: 140, Time: 0.1221, Loss: 0.2041, TrainAcc: 0.9230, ValAcc: 0.7969, ES: 38/50 | BestVal=0.8707@E102
+Epoch: 150, Time: 0.1223, Loss: 0.1919, TrainAcc: 0.9286, ValAcc: 0.7720, ES: 48/50 | BestVal=0.8707@E102
+Early stopped, loading model from epoch-102
+Finished running train at 05-14 03:28:55, running time = 18.76s.
+[SAGE + TA] ValAcc: 0.8707, TestAcc: 0.8778
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/pubmed/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([19717, 4096])
+Loading model MLP...
+
+Number of parameters: 558595
+Start running train at 05-14 03:28:57
+Epoch: 0, Time: 0.0403, Loss: 1.1788, TrainAcc: 0.2731, ValAcc: 0.4055, ES: 00/50 | BestVal=0.4055@E0
+Epoch: 10, Time: 0.0206, Loss: 0.5155, TrainAcc: 0.7876, ValAcc: 0.7309, ES: 03/50 | BestVal=0.7375@E7
+Epoch: 20, Time: 0.0212, Loss: 0.4294, TrainAcc: 0.8330, ValAcc: 0.6949, ES: 13/50 | BestVal=0.7375@E7
+Epoch: 30, Time: 0.0196, Loss: 0.3733, TrainAcc: 0.8542, ValAcc: 0.8204, ES: 02/50 | BestVal=0.8237@E28
+Epoch: 40, Time: 0.0210, Loss: 0.3318, TrainAcc: 0.8720, ValAcc: 0.8007, ES: 12/50 | BestVal=0.8237@E28
+Epoch: 50, Time: 0.0261, Loss: 0.3183, TrainAcc: 0.8760, ValAcc: 0.8384, ES: 00/50 | BestVal=0.8384@E50
+Epoch: 60, Time: 0.0242, Loss: 0.2866, TrainAcc: 0.8893, ValAcc: 0.8669, ES: 00/50 | BestVal=0.8669@E60
+Epoch: 70, Time: 0.0201, Loss: 0.2826, TrainAcc: 0.8896, ValAcc: 0.8346, ES: 09/50 | BestVal=0.8674@E61
+Epoch: 80, Time: 0.0200, Loss: 0.2562, TrainAcc: 0.9014, ValAcc: 0.8696, ES: 01/50 | BestVal=0.8722@E79
+Epoch: 90, Time: 0.0207, Loss: 0.2419, TrainAcc: 0.9073, ValAcc: 0.8565, ES: 02/50 | BestVal=0.8732@E88
+Epoch: 100, Time: 0.0202, Loss: 0.2394, TrainAcc: 0.9075, ValAcc: 0.8405, ES: 12/50 | BestVal=0.8732@E88
+Epoch: 110, Time: 0.0214, Loss: 0.2219, TrainAcc: 0.9170, ValAcc: 0.8724, ES: 05/50 | BestVal=0.8755@E105
+Epoch: 120, Time: 0.0201, Loss: 0.2048, TrainAcc: 0.9234, ValAcc: 0.8458, ES: 09/50 | BestVal=0.8785@E111
+Epoch: 130, Time: 0.0201, Loss: 0.2657, TrainAcc: 0.8994, ValAcc: 0.7877, ES: 19/50 | BestVal=0.8785@E111
+Epoch: 140, Time: 0.0222, Loss: 0.2296, TrainAcc: 0.9123, ValAcc: 0.8719, ES: 29/50 | BestVal=0.8785@E111
+Epoch: 150, Time: 0.0261, Loss: 0.1990, TrainAcc: 0.9254, ValAcc: 0.8823, ES: 00/50 | BestVal=0.8823@E150
+Epoch: 160, Time: 0.0213, Loss: 0.1855, TrainAcc: 0.9314, ValAcc: 0.8623, ES: 09/50 | BestVal=0.8874@E151
+Epoch: 170, Time: 0.0200, Loss: 0.2449, TrainAcc: 0.9075, ValAcc: 0.8610, ES: 19/50 | BestVal=0.8874@E151
+Epoch: 180, Time: 0.0206, Loss: 0.1848, TrainAcc: 0.9332, ValAcc: 0.8836, ES: 29/50 | BestVal=0.8874@E151
+Epoch: 190, Time: 0.0205, Loss: 0.1682, TrainAcc: 0.9370, ValAcc: 0.8646, ES: 03/50 | BestVal=0.8963@E187
+Finished running train at 05-14 03:29:02, running time = 4.43s.
+[MLP + TA] ValAcc: 0.8963, TestAcc: 0.8938
+
+(TA) ValAcc: 0.9044, TestAcc: 0.9021
+
+[{'TA': {'val_acc': 0.8962718742074562, 'test_acc': 0.893762677484787}, 'ensemble': {'val_acc': 0.904387522191225, 'test_acc': 0.902129817444219}}]
+Running time: 50.02s
+An import exception occurred
+loaded dataset: pubmed
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/pubmed/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([19717, 4096])
+Model RevGAT is not supported! Loading MLP ...
+Loading model RevGAT...
+
+Number of parameters: 558595
+Start running train at 05-14 03:29:13
+Epoch: 0, Time: 1.0280, Loss: 1.1125, TrainAcc: 0.3672, ValAcc: 0.4180, ES: 00/50 | BestVal=0.4180@E0
+Epoch: 10, Time: 0.0187, Loss: 0.3402, TrainAcc: 0.8698, ValAcc: 0.7832, ES: 02/50 | BestVal=0.8354@E8
+Epoch: 20, Time: 0.0243, Loss: 0.2845, TrainAcc: 0.8916, ValAcc: 0.8524, ES: 00/50 | BestVal=0.8524@E20
+Epoch: 30, Time: 0.0235, Loss: 0.2313, TrainAcc: 0.9161, ValAcc: 0.8940, ES: 00/50 | BestVal=0.8940@E30
+Epoch: 40, Time: 0.0237, Loss: 0.1931, TrainAcc: 0.9285, ValAcc: 0.9064, ES: 00/50 | BestVal=0.9064@E40
+Epoch: 50, Time: 0.0206, Loss: 0.1590, TrainAcc: 0.9416, ValAcc: 0.9107, ES: 08/50 | BestVal=0.9125@E42
+Epoch: 60, Time: 0.0207, Loss: 0.1378, TrainAcc: 0.9520, ValAcc: 0.8958, ES: 18/50 | BestVal=0.9125@E42
+Epoch: 70, Time: 0.0199, Loss: 0.1207, TrainAcc: 0.9565, ValAcc: 0.8912, ES: 28/50 | BestVal=0.9125@E42
+Epoch: 80, Time: 0.0201, Loss: 0.1162, TrainAcc: 0.9567, ValAcc: 0.9090, ES: 38/50 | BestVal=0.9125@E42
+Epoch: 90, Time: 0.0199, Loss: 0.0936, TrainAcc: 0.9684, ValAcc: 0.9062, ES: 48/50 | BestVal=0.9125@E42
+Early stopped, loading model from epoch-42
+Finished running train at 05-14 03:29:16, running time = 3.09s.
+[RevGAT + TA] ValAcc: 0.9125, TestAcc: 0.9158
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/pubmed/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([19717, 4096])
+Loading model GCN...
+
+Number of parameters: 558595
+Start running train at 05-14 03:29:18
+Epoch: 0, Time: 0.0668, Loss: 1.5032, TrainAcc: 0.2050, ValAcc: 0.4055, ES: 00/50 | BestVal=0.4055@E0
+Epoch: 10, Time: 0.0348, Loss: 0.4673, TrainAcc: 0.8189, ValAcc: 0.6427, ES: 05/50 | BestVal=0.6546@E5
+Epoch: 20, Time: 0.0342, Loss: 0.4325, TrainAcc: 0.8321, ValAcc: 0.7974, ES: 02/50 | BestVal=0.8123@E18
+Epoch: 30, Time: 0.0414, Loss: 0.4095, TrainAcc: 0.8448, ValAcc: 0.8260, ES: 00/50 | BestVal=0.8260@E30
+Epoch: 40, Time: 0.0352, Loss: 0.3843, TrainAcc: 0.8587, ValAcc: 0.8067, ES: 10/50 | BestVal=0.8260@E30
+Epoch: 50, Time: 0.0353, Loss: 0.3553, TrainAcc: 0.8701, ValAcc: 0.8197, ES: 20/50 | BestVal=0.8260@E30
+Epoch: 60, Time: 0.0396, Loss: 0.3278, TrainAcc: 0.8820, ValAcc: 0.8547, ES: 00/50 | BestVal=0.8547@E60
+Epoch: 70, Time: 0.0395, Loss: 0.3038, TrainAcc: 0.8884, ValAcc: 0.8714, ES: 00/50 | BestVal=0.8714@E70
+Epoch: 80, Time: 0.0363, Loss: 0.2810, TrainAcc: 0.8984, ValAcc: 0.8679, ES: 03/50 | BestVal=0.8719@E77
+Epoch: 90, Time: 0.0409, Loss: 0.2570, TrainAcc: 0.9084, ValAcc: 0.8793, ES: 00/50 | BestVal=0.8793@E90
+Epoch: 100, Time: 0.0343, Loss: 0.2793, TrainAcc: 0.9003, ValAcc: 0.8661, ES: 10/50 | BestVal=0.8793@E90
+Epoch: 110, Time: 0.0358, Loss: 0.2479, TrainAcc: 0.9101, ValAcc: 0.8623, ES: 04/50 | BestVal=0.8856@E106
+Epoch: 120, Time: 0.0355, Loss: 0.2264, TrainAcc: 0.9191, ValAcc: 0.8372, ES: 05/50 | BestVal=0.8892@E115
+Epoch: 130, Time: 0.0346, Loss: 0.2120, TrainAcc: 0.9280, ValAcc: 0.8800, ES: 01/50 | BestVal=0.8978@E129
+Epoch: 140, Time: 0.0359, Loss: 0.2096, TrainAcc: 0.9271, ValAcc: 0.8466, ES: 11/50 | BestVal=0.8978@E129
+Epoch: 150, Time: 0.0347, Loss: 0.1999, TrainAcc: 0.9312, ValAcc: 0.8917, ES: 03/50 | BestVal=0.8986@E147
+Epoch: 160, Time: 0.0359, Loss: 0.2014, TrainAcc: 0.9282, ValAcc: 0.8220, ES: 13/50 | BestVal=0.8986@E147
+Epoch: 170, Time: 0.0351, Loss: 0.2060, TrainAcc: 0.9275, ValAcc: 0.8633, ES: 23/50 | BestVal=0.8986@E147
+Epoch: 180, Time: 0.0353, Loss: 0.1867, TrainAcc: 0.9332, ValAcc: 0.8154, ES: 33/50 | BestVal=0.8986@E147
+Epoch: 190, Time: 0.0341, Loss: 0.1720, TrainAcc: 0.9376, ValAcc: 0.7393, ES: 43/50 | BestVal=0.8986@E147
+Finished running train at 05-14 03:29:26, running time = 7.31s.
+[GCN + TA] ValAcc: 0.8993, TestAcc: 0.9019
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/pubmed/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([19717, 4096])
+Loading model SAGE...
+
+Number of parameters: 1116035
+Start running train at 05-14 03:29:28
+Epoch: 0, Time: 0.1880, Loss: 1.1187, TrainAcc: 0.4085, ValAcc: 0.4694, ES: 00/50 | BestVal=0.4694@E0
+Epoch: 10, Time: 0.1224, Loss: 0.4524, TrainAcc: 0.8232, ValAcc: 0.8027, ES: 00/50 | BestVal=0.8027@E10
+Epoch: 20, Time: 0.1258, Loss: 0.3918, TrainAcc: 0.8533, ValAcc: 0.8258, ES: 00/50 | BestVal=0.8258@E20
+Epoch: 30, Time: 0.1216, Loss: 0.3476, TrainAcc: 0.8678, ValAcc: 0.8435, ES: 03/50 | BestVal=0.8476@E27
+Epoch: 40, Time: 0.1185, Loss: 0.2997, TrainAcc: 0.8840, ValAcc: 0.8506, ES: 01/50 | BestVal=0.8534@E39
+Epoch: 50, Time: 0.1136, Loss: 0.2545, TrainAcc: 0.9037, ValAcc: 0.8826, ES: 01/50 | BestVal=0.8828@E49
+Epoch: 60, Time: 0.1216, Loss: 0.2169, TrainAcc: 0.9199, ValAcc: 0.8963, ES: 04/50 | BestVal=0.9008@E56
+Epoch: 70, Time: 0.1193, Loss: 0.1757, TrainAcc: 0.9347, ValAcc: 0.8902, ES: 14/50 | BestVal=0.9008@E56
+Epoch: 80, Time: 0.1360, Loss: 0.1494, TrainAcc: 0.9454, ValAcc: 0.9041, ES: 00/50 | BestVal=0.9041@E80
+Epoch: 90, Time: 0.1318, Loss: 0.1236, TrainAcc: 0.9566, ValAcc: 0.9120, ES: 00/50 | BestVal=0.9120@E90
+Epoch: 100, Time: 0.1203, Loss: 0.1198, TrainAcc: 0.9573, ValAcc: 0.9054, ES: 10/50 | BestVal=0.9120@E90
+Epoch: 110, Time: 0.1209, Loss: 0.0952, TrainAcc: 0.9664, ValAcc: 0.9039, ES: 05/50 | BestVal=0.9122@E105
+Epoch: 120, Time: 0.1210, Loss: 0.0759, TrainAcc: 0.9738, ValAcc: 0.9057, ES: 15/50 | BestVal=0.9122@E105
+Epoch: 130, Time: 0.1202, Loss: 0.0560, TrainAcc: 0.9820, ValAcc: 0.9090, ES: 04/50 | BestVal=0.9128@E126
+Epoch: 140, Time: 0.1232, Loss: 0.0465, TrainAcc: 0.9848, ValAcc: 0.9079, ES: 14/50 | BestVal=0.9128@E126
+Epoch: 150, Time: 0.1228, Loss: 0.1479, TrainAcc: 0.9445, ValAcc: 0.8336, ES: 24/50 | BestVal=0.9128@E126
+Epoch: 160, Time: 0.1213, Loss: 0.1089, TrainAcc: 0.9622, ValAcc: 0.9072, ES: 34/50 | BestVal=0.9128@E126
+Epoch: 170, Time: 0.1205, Loss: 0.0641, TrainAcc: 0.9785, ValAcc: 0.9013, ES: 04/50 | BestVal=0.9150@E166
+Epoch: 180, Time: 0.1212, Loss: 0.0546, TrainAcc: 0.9835, ValAcc: 0.9024, ES: 14/50 | BestVal=0.9150@E166
+Epoch: 190, Time: 0.1220, Loss: 0.0337, TrainAcc: 0.9904, ValAcc: 0.9064, ES: 24/50 | BestVal=0.9150@E166
+Finished running train at 05-14 03:29:52, running time = 24.49s.
+[SAGE + TA] ValAcc: 0.9150, TestAcc: 0.9199
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/pubmed/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([19717, 4096])
+Loading model MLP...
+
+Number of parameters: 558595
+Start running train at 05-14 03:29:54
+Epoch: 0, Time: 0.0373, Loss: 1.1125, TrainAcc: 0.3672, ValAcc: 0.4180, ES: 00/50 | BestVal=0.4180@E0
+Epoch: 10, Time: 0.0199, Loss: 0.3402, TrainAcc: 0.8698, ValAcc: 0.7832, ES: 02/50 | BestVal=0.8354@E8
+Epoch: 20, Time: 0.0250, Loss: 0.2845, TrainAcc: 0.8916, ValAcc: 0.8524, ES: 00/50 | BestVal=0.8524@E20
+Epoch: 30, Time: 0.0246, Loss: 0.2313, TrainAcc: 0.9161, ValAcc: 0.8940, ES: 00/50 | BestVal=0.8940@E30
+Epoch: 40, Time: 0.0233, Loss: 0.1931, TrainAcc: 0.9285, ValAcc: 0.9064, ES: 00/50 | BestVal=0.9064@E40
+Epoch: 50, Time: 0.0212, Loss: 0.1590, TrainAcc: 0.9416, ValAcc: 0.9107, ES: 08/50 | BestVal=0.9125@E42
+Epoch: 60, Time: 0.0195, Loss: 0.1378, TrainAcc: 0.9520, ValAcc: 0.8958, ES: 18/50 | BestVal=0.9125@E42
+Epoch: 70, Time: 0.0202, Loss: 0.1207, TrainAcc: 0.9565, ValAcc: 0.8912, ES: 28/50 | BestVal=0.9125@E42
+Epoch: 80, Time: 0.0204, Loss: 0.1162, TrainAcc: 0.9567, ValAcc: 0.9090, ES: 38/50 | BestVal=0.9125@E42
+Epoch: 90, Time: 0.0198, Loss: 0.0936, TrainAcc: 0.9684, ValAcc: 0.9062, ES: 48/50 | BestVal=0.9125@E42
+Early stopped, loading model from epoch-42
+Finished running train at 05-14 03:29:57, running time = 2.07s.
+[MLP + TA] ValAcc: 0.9125, TestAcc: 0.9158
+
+(TA) ValAcc: 0.9272, TestAcc: 0.9298
+
+[{'TA': {'val_acc': 0.9125031701749936, 'test_acc': 0.9158215010141988}, 'ensemble': {'val_acc': 0.9272127821455745, 'test_acc': 0.9297667342799188}}]
+Running time: 50.8s
+An import exception occurred
+loaded dataset: arxiv_2023
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/arxiv_2023/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([46198, 4096])
+Model RevGAT is not supported! Loading MLP ...
+Loading model RevGAT...
+
+Number of parameters: 563368
+Start running train at 05-14 03:30:06
+Epoch: 0, Time: 1.0632, Loss: 3.7682, TrainAcc: 0.0178, ValAcc: 0.2332, ES: 00/50 | BestVal=0.2332@E0
+Epoch: 10, Time: 0.0479, Loss: 1.0496, TrainAcc: 0.7312, ValAcc: 0.6991, ES: 00/50 | BestVal=0.6991@E10
+Epoch: 20, Time: 0.0524, Loss: 0.8394, TrainAcc: 0.7567, ValAcc: 0.7577, ES: 00/50 | BestVal=0.7577@E20
+Epoch: 30, Time: 0.0531, Loss: 0.7412, TrainAcc: 0.7787, ValAcc: 0.7816, ES: 00/50 | BestVal=0.7816@E30
+Epoch: 40, Time: 0.0535, Loss: 0.6869, TrainAcc: 0.7918, ValAcc: 0.7913, ES: 00/50 | BestVal=0.7913@E40
+Epoch: 50, Time: 0.0505, Loss: 0.6496, TrainAcc: 0.8006, ValAcc: 0.7969, ES: 00/50 | BestVal=0.7969@E50
+Epoch: 60, Time: 0.0481, Loss: 0.6222, TrainAcc: 0.8048, ValAcc: 0.7990, ES: 03/50 | BestVal=0.7994@E57
+Epoch: 70, Time: 0.0520, Loss: 0.5996, TrainAcc: 0.8092, ValAcc: 0.8038, ES: 00/50 | BestVal=0.8038@E70
+Epoch: 80, Time: 0.0549, Loss: 0.5797, TrainAcc: 0.8147, ValAcc: 0.8075, ES: 00/50 | BestVal=0.8075@E80
+Epoch: 90, Time: 0.0463, Loss: 0.5608, TrainAcc: 0.8188, ValAcc: 0.8067, ES: 10/50 | BestVal=0.8075@E80
+Epoch: 100, Time: 0.0479, Loss: 0.5521, TrainAcc: 0.8204, ValAcc: 0.8064, ES: 20/50 | BestVal=0.8075@E80
+Epoch: 110, Time: 0.0466, Loss: 0.5303, TrainAcc: 0.8251, ValAcc: 0.8066, ES: 02/50 | BestVal=0.8082@E108
+Epoch: 120, Time: 0.0509, Loss: 0.5191, TrainAcc: 0.8267, ValAcc: 0.8029, ES: 12/50 | BestVal=0.8082@E108
+Epoch: 130, Time: 0.0503, Loss: 0.5004, TrainAcc: 0.8338, ValAcc: 0.8049, ES: 22/50 | BestVal=0.8082@E108
+Epoch: 140, Time: 0.0471, Loss: 0.5031, TrainAcc: 0.8311, ValAcc: 0.8026, ES: 32/50 | BestVal=0.8082@E108
+Epoch: 150, Time: 0.0472, Loss: 0.4725, TrainAcc: 0.8396, ValAcc: 0.8056, ES: 42/50 | BestVal=0.8082@E108
+Early stopped, loading model from epoch-108
+Finished running train at 05-14 03:30:15, running time = 8.90s.
+[RevGAT + TA] ValAcc: 0.8082, TestAcc: 0.8024
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/arxiv_2023/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([46198, 4096])
+Loading model GCN...
+
+Number of parameters: 563368
+Start running train at 05-14 03:30:17
+Epoch: 0, Time: 0.0660, Loss: 3.9755, TrainAcc: 0.0118, ValAcc: 0.0444, ES: 00/50 | BestVal=0.0444@E0
+Epoch: 10, Time: 0.0728, Loss: 1.1515, TrainAcc: 0.7194, ValAcc: 0.4358, ES: 00/50 | BestVal=0.4358@E10
+Epoch: 20, Time: 0.0712, Loss: 0.9713, TrainAcc: 0.7400, ValAcc: 0.7265, ES: 00/50 | BestVal=0.7265@E20
+Epoch: 30, Time: 0.0711, Loss: 0.8897, TrainAcc: 0.7569, ValAcc: 0.7633, ES: 00/50 | BestVal=0.7633@E30
+Epoch: 40, Time: 0.0717, Loss: 0.8399, TrainAcc: 0.7656, ValAcc: 0.7719, ES: 00/50 | BestVal=0.7719@E40
+Epoch: 50, Time: 0.0739, Loss: 0.8053, TrainAcc: 0.7719, ValAcc: 0.7765, ES: 00/50 | BestVal=0.7765@E50
+Epoch: 60, Time: 0.0667, Loss: 0.7776, TrainAcc: 0.7757, ValAcc: 0.7777, ES: 01/50 | BestVal=0.7780@E59
+Epoch: 70, Time: 0.0669, Loss: 0.7551, TrainAcc: 0.7797, ValAcc: 0.7793, ES: 01/50 | BestVal=0.7803@E69
+Epoch: 80, Time: 0.0705, Loss: 0.7311, TrainAcc: 0.7850, ValAcc: 0.7782, ES: 05/50 | BestVal=0.7823@E75
+Epoch: 90, Time: 0.0711, Loss: 0.7176, TrainAcc: 0.7872, ValAcc: 0.7765, ES: 15/50 | BestVal=0.7823@E75
+Epoch: 100, Time: 0.0714, Loss: 0.7000, TrainAcc: 0.7907, ValAcc: 0.7775, ES: 25/50 | BestVal=0.7823@E75
+Epoch: 110, Time: 0.0716, Loss: 0.6779, TrainAcc: 0.7963, ValAcc: 0.7812, ES: 35/50 | BestVal=0.7823@E75
+Epoch: 120, Time: 0.0651, Loss: 0.6587, TrainAcc: 0.7993, ValAcc: 0.7818, ES: 01/50 | BestVal=0.7827@E119
+Epoch: 130, Time: 0.0709, Loss: 0.6425, TrainAcc: 0.8046, ValAcc: 0.7815, ES: 02/50 | BestVal=0.7860@E128
+Epoch: 140, Time: 0.0659, Loss: 0.6306, TrainAcc: 0.8049, ValAcc: 0.7834, ES: 12/50 | BestVal=0.7860@E128
+Epoch: 150, Time: 0.0683, Loss: 0.6366, TrainAcc: 0.8006, ValAcc: 0.7821, ES: 22/50 | BestVal=0.7860@E128
+Epoch: 160, Time: 0.0721, Loss: 0.6049, TrainAcc: 0.8108, ValAcc: 0.7794, ES: 32/50 | BestVal=0.7860@E128
+Epoch: 170, Time: 0.0696, Loss: 0.5829, TrainAcc: 0.8161, ValAcc: 0.7792, ES: 42/50 | BestVal=0.7860@E128
+Early stopped, loading model from epoch-128
+Finished running train at 05-14 03:30:29, running time = 12.49s.
+[GCN + TA] ValAcc: 0.7860, TestAcc: 0.7777
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/arxiv_2023/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([46198, 4096])
+Loading model SAGE...
+
+Number of parameters: 1125544
+Start running train at 05-14 03:30:31
+Epoch: 0, Time: 0.1765, Loss: 3.7547, TrainAcc: 0.0310, ValAcc: 0.2144, ES: 00/50 | BestVal=0.2144@E0
+Epoch: 10, Time: 0.1732, Loss: 1.3615, TrainAcc: 0.6437, ValAcc: 0.6206, ES: 00/50 | BestVal=0.6206@E10
+Epoch: 20, Time: 0.1746, Loss: 1.0244, TrainAcc: 0.7270, ValAcc: 0.7141, ES: 00/50 | BestVal=0.7141@E20
+Epoch: 30, Time: 0.1776, Loss: 0.8424, TrainAcc: 0.7562, ValAcc: 0.7557, ES: 00/50 | BestVal=0.7557@E30
+Epoch: 40, Time: 0.1815, Loss: 0.7529, TrainAcc: 0.7754, ValAcc: 0.7739, ES: 00/50 | BestVal=0.7739@E40
+Epoch: 50, Time: 0.1649, Loss: 0.7000, TrainAcc: 0.7885, ValAcc: 0.7812, ES: 01/50 | BestVal=0.7816@E49
+Epoch: 60, Time: 0.1749, Loss: 0.6530, TrainAcc: 0.7980, ValAcc: 0.7889, ES: 00/50 | BestVal=0.7889@E60
+Epoch: 70, Time: 0.1673, Loss: 0.6252, TrainAcc: 0.8041, ValAcc: 0.7942, ES: 01/50 | BestVal=0.7945@E69
+Epoch: 80, Time: 0.1673, Loss: 0.6023, TrainAcc: 0.8105, ValAcc: 0.7974, ES: 05/50 | BestVal=0.7985@E75
+Epoch: 90, Time: 0.1806, Loss: 0.5779, TrainAcc: 0.8176, ValAcc: 0.8022, ES: 00/50 | BestVal=0.8022@E90
+Epoch: 100, Time: 0.1690, Loss: 0.5622, TrainAcc: 0.8200, ValAcc: 0.8015, ES: 02/50 | BestVal=0.8030@E98
+Epoch: 110, Time: 0.1719, Loss: 0.5423, TrainAcc: 0.8259, ValAcc: 0.8009, ES: 09/50 | BestVal=0.8056@E101
+Epoch: 120, Time: 0.1672, Loss: 0.5391, TrainAcc: 0.8249, ValAcc: 0.7981, ES: 19/50 | BestVal=0.8056@E101
+Epoch: 130, Time: 0.1668, Loss: 0.5211, TrainAcc: 0.8313, ValAcc: 0.7996, ES: 29/50 | BestVal=0.8056@E101
+Epoch: 140, Time: 0.1723, Loss: 0.5091, TrainAcc: 0.8328, ValAcc: 0.8006, ES: 39/50 | BestVal=0.8056@E101
+Epoch: 150, Time: 0.1673, Loss: 0.5032, TrainAcc: 0.8343, ValAcc: 0.7976, ES: 49/50 | BestVal=0.8056@E101
+Early stopped, loading model from epoch-101
+Finished running train at 05-14 03:30:57, running time = 26.18s.
+[SAGE + TA] ValAcc: 0.8056, TestAcc: 0.7966
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/arxiv_2023/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+Embeddings shape: torch.Size([46198, 4096])
+Loading model MLP...
+
+Number of parameters: 563368
+Start running train at 05-14 03:30:59
+Epoch: 0, Time: 0.0424, Loss: 3.7682, TrainAcc: 0.0178, ValAcc: 0.2332, ES: 00/50 | BestVal=0.2332@E0
+Epoch: 10, Time: 0.0528, Loss: 1.0496, TrainAcc: 0.7312, ValAcc: 0.6991, ES: 00/50 | BestVal=0.6991@E10
+Epoch: 20, Time: 0.0474, Loss: 0.8394, TrainAcc: 0.7567, ValAcc: 0.7577, ES: 00/50 | BestVal=0.7577@E20
+Epoch: 30, Time: 0.0486, Loss: 0.7412, TrainAcc: 0.7787, ValAcc: 0.7816, ES: 00/50 | BestVal=0.7816@E30
+Epoch: 40, Time: 0.0515, Loss: 0.6869, TrainAcc: 0.7918, ValAcc: 0.7913, ES: 00/50 | BestVal=0.7913@E40
+Epoch: 50, Time: 0.0547, Loss: 0.6496, TrainAcc: 0.8006, ValAcc: 0.7969, ES: 00/50 | BestVal=0.7969@E50
+Epoch: 60, Time: 0.0528, Loss: 0.6222, TrainAcc: 0.8048, ValAcc: 0.7990, ES: 03/50 | BestVal=0.7994@E57
+Epoch: 70, Time: 0.0489, Loss: 0.5996, TrainAcc: 0.8092, ValAcc: 0.8038, ES: 00/50 | BestVal=0.8038@E70
+Epoch: 80, Time: 0.0541, Loss: 0.5797, TrainAcc: 0.8147, ValAcc: 0.8075, ES: 00/50 | BestVal=0.8075@E80
+Epoch: 90, Time: 0.0516, Loss: 0.5608, TrainAcc: 0.8188, ValAcc: 0.8067, ES: 10/50 | BestVal=0.8075@E80
+Epoch: 100, Time: 0.0477, Loss: 0.5521, TrainAcc: 0.8204, ValAcc: 0.8064, ES: 20/50 | BestVal=0.8075@E80
+Epoch: 110, Time: 0.0502, Loss: 0.5303, TrainAcc: 0.8251, ValAcc: 0.8066, ES: 02/50 | BestVal=0.8082@E108
+Epoch: 120, Time: 0.0470, Loss: 0.5191, TrainAcc: 0.8267, ValAcc: 0.8029, ES: 12/50 | BestVal=0.8082@E108
+Epoch: 130, Time: 0.0513, Loss: 0.5004, TrainAcc: 0.8338, ValAcc: 0.8049, ES: 22/50 | BestVal=0.8082@E108
+Epoch: 140, Time: 0.0465, Loss: 0.5031, TrainAcc: 0.8311, ValAcc: 0.8026, ES: 32/50 | BestVal=0.8082@E108
+Epoch: 150, Time: 0.0475, Loss: 0.4725, TrainAcc: 0.8396, ValAcc: 0.8056, ES: 42/50 | BestVal=0.8082@E108
+Early stopped, loading model from epoch-108
+Finished running train at 05-14 03:31:07, running time = 8.01s.
+[MLP + TA] ValAcc: 0.8082, TestAcc: 0.8024
+
+(TA) ValAcc: 0.8124, TestAcc: 0.8075
+
+[{'TA': {'val_acc': 0.8082251082251082, 'test_acc': 0.8023809523809524}, 'ensemble': {'val_acc': 0.8124458874458874, 'test_acc': 0.8074675324675324}}]
+Running time: 66.29s
+An import exception occurred
+loaded dataset: arxiv_2023
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/arxiv_2023/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([46198, 4096])
+Model RevGAT is not supported! Loading MLP ...
+Loading model RevGAT...
+
+Number of parameters: 563368
+Start running train at 05-14 03:31:17
+Epoch: 0, Time: 1.0660, Loss: 3.7449, TrainAcc: 0.0131, ValAcc: 0.2332, ES: 00/50 | BestVal=0.2332@E0
+Epoch: 10, Time: 0.0472, Loss: 1.0382, TrainAcc: 0.7309, ValAcc: 0.6391, ES: 00/50 | BestVal=0.6391@E10
+Epoch: 20, Time: 0.0524, Loss: 0.8250, TrainAcc: 0.7575, ValAcc: 0.7471, ES: 00/50 | BestVal=0.7471@E20
+Epoch: 30, Time: 0.0523, Loss: 0.7238, TrainAcc: 0.7810, ValAcc: 0.7816, ES: 00/50 | BestVal=0.7816@E30
+Epoch: 40, Time: 0.0477, Loss: 0.6520, TrainAcc: 0.7977, ValAcc: 0.7916, ES: 00/50 | BestVal=0.7916@E40
+Epoch: 50, Time: 0.0433, Loss: 0.6017, TrainAcc: 0.8095, ValAcc: 0.7972, ES: 01/50 | BestVal=0.7979@E49
+Epoch: 60, Time: 0.0468, Loss: 0.5600, TrainAcc: 0.8201, ValAcc: 0.8014, ES: 00/50 | BestVal=0.8014@E60
+Epoch: 70, Time: 0.0463, Loss: 0.5215, TrainAcc: 0.8299, ValAcc: 0.7999, ES: 06/50 | BestVal=0.8025@E64
+Epoch: 80, Time: 0.0474, Loss: 0.4813, TrainAcc: 0.8402, ValAcc: 0.7962, ES: 16/50 | BestVal=0.8025@E64
+Epoch: 90, Time: 0.0499, Loss: 0.4609, TrainAcc: 0.8437, ValAcc: 0.7790, ES: 26/50 | BestVal=0.8025@E64
+Epoch: 100, Time: 0.0461, Loss: 0.4330, TrainAcc: 0.8549, ValAcc: 0.7904, ES: 36/50 | BestVal=0.8025@E64
+Epoch: 110, Time: 0.0478, Loss: 0.3673, TrainAcc: 0.8763, ValAcc: 0.7843, ES: 46/50 | BestVal=0.8025@E64
+Early stopped, loading model from epoch-64
+Finished running train at 05-14 03:31:23, running time = 6.72s.
+[RevGAT + TA] ValAcc: 0.8025, TestAcc: 0.7957
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/arxiv_2023/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([46198, 4096])
+Loading model GCN...
+
+Number of parameters: 563368
+Start running train at 05-14 03:31:25
+Epoch: 0, Time: 0.0714, Loss: 3.7190, TrainAcc: 0.0521, ValAcc: 0.3266, ES: 00/50 | BestVal=0.3266@E0
+Epoch: 10, Time: 0.0666, Loss: 1.1260, TrainAcc: 0.7159, ValAcc: 0.4618, ES: 04/50 | BestVal=0.4650@E6
+Epoch: 20, Time: 0.0705, Loss: 0.9346, TrainAcc: 0.7418, ValAcc: 0.7166, ES: 00/50 | BestVal=0.7166@E20
+Epoch: 30, Time: 0.0705, Loss: 0.8383, TrainAcc: 0.7635, ValAcc: 0.7491, ES: 00/50 | BestVal=0.7491@E30
+Epoch: 40, Time: 0.0698, Loss: 0.7730, TrainAcc: 0.7753, ValAcc: 0.7656, ES: 00/50 | BestVal=0.7656@E40
+Epoch: 50, Time: 0.0711, Loss: 0.7241, TrainAcc: 0.7856, ValAcc: 0.7766, ES: 00/50 | BestVal=0.7766@E50
+Epoch: 60, Time: 0.0694, Loss: 0.6791, TrainAcc: 0.7940, ValAcc: 0.7753, ES: 07/50 | BestVal=0.7766@E53
+Epoch: 70, Time: 0.0740, Loss: 0.6505, TrainAcc: 0.8032, ValAcc: 0.7788, ES: 00/50 | BestVal=0.7788@E70
+Epoch: 80, Time: 0.0661, Loss: 0.5972, TrainAcc: 0.8156, ValAcc: 0.7751, ES: 05/50 | BestVal=0.7810@E75
+Epoch: 90, Time: 0.0684, Loss: 0.5523, TrainAcc: 0.8266, ValAcc: 0.7659, ES: 15/50 | BestVal=0.7810@E75
+Epoch: 100, Time: 0.0686, Loss: 0.5083, TrainAcc: 0.8374, ValAcc: 0.7627, ES: 25/50 | BestVal=0.7810@E75
+Epoch: 110, Time: 0.0678, Loss: 0.4863, TrainAcc: 0.8423, ValAcc: 0.7589, ES: 35/50 | BestVal=0.7810@E75
+Epoch: 120, Time: 0.0676, Loss: 0.4263, TrainAcc: 0.8621, ValAcc: 0.7529, ES: 45/50 | BestVal=0.7810@E75
+Early stopped, loading model from epoch-75
+Finished running train at 05-14 03:31:34, running time = 8.72s.
+[GCN + TA] ValAcc: 0.7810, TestAcc: 0.7755
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/arxiv_2023/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([46198, 4096])
+Loading model SAGE...
+
+Number of parameters: 1125544
+Start running train at 05-14 03:31:35
+Epoch: 0, Time: 0.1754, Loss: 3.7387, TrainAcc: 0.0272, ValAcc: 0.2173, ES: 00/50 | BestVal=0.2173@E0
+Epoch: 10, Time: 0.1745, Loss: 1.3652, TrainAcc: 0.6380, ValAcc: 0.6123, ES: 00/50 | BestVal=0.6123@E10
+Epoch: 20, Time: 0.1765, Loss: 1.0867, TrainAcc: 0.7065, ValAcc: 0.6865, ES: 00/50 | BestVal=0.6865@E20
+Epoch: 30, Time: 0.1744, Loss: 0.8904, TrainAcc: 0.7413, ValAcc: 0.7355, ES: 00/50 | BestVal=0.7355@E30
+Epoch: 40, Time: 0.1793, Loss: 0.7758, TrainAcc: 0.7644, ValAcc: 0.7553, ES: 00/50 | BestVal=0.7553@E40
+Epoch: 50, Time: 0.1838, Loss: 0.6991, TrainAcc: 0.7853, ValAcc: 0.7787, ES: 00/50 | BestVal=0.7787@E50
+Epoch: 60, Time: 0.1822, Loss: 0.6492, TrainAcc: 0.7971, ValAcc: 0.7860, ES: 00/50 | BestVal=0.7860@E60
+Epoch: 70, Time: 0.1664, Loss: 0.6050, TrainAcc: 0.8071, ValAcc: 0.7905, ES: 01/50 | BestVal=0.7910@E69
+Epoch: 80, Time: 0.1651, Loss: 0.5629, TrainAcc: 0.8196, ValAcc: 0.7943, ES: 01/50 | BestVal=0.7950@E79
+Epoch: 90, Time: 0.1707, Loss: 0.5550, TrainAcc: 0.8184, ValAcc: 0.7815, ES: 07/50 | BestVal=0.7952@E83
+Epoch: 100, Time: 0.1755, Loss: 0.5056, TrainAcc: 0.8366, ValAcc: 0.7868, ES: 17/50 | BestVal=0.7952@E83
+Epoch: 110, Time: 0.1774, Loss: 0.4682, TrainAcc: 0.8470, ValAcc: 0.7877, ES: 27/50 | BestVal=0.7952@E83
+Epoch: 120, Time: 0.1751, Loss: 0.4491, TrainAcc: 0.8531, ValAcc: 0.7818, ES: 37/50 | BestVal=0.7952@E83
+Epoch: 130, Time: 0.1753, Loss: 0.4117, TrainAcc: 0.8645, ValAcc: 0.7871, ES: 47/50 | BestVal=0.7952@E83
+Early stopped, loading model from epoch-83
+Finished running train at 05-14 03:31:58, running time = 23.27s.
+[SAGE + TA] ValAcc: 0.7952, TestAcc: 0.7931
+
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/arxiv_2023/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb
+Embeddings shape: torch.Size([46198, 4096])
+Loading model MLP...
+
+Number of parameters: 563368
+Start running train at 05-14 03:32:00
+Epoch: 0, Time: 0.0460, Loss: 3.7449, TrainAcc: 0.0131, ValAcc: 0.2332, ES: 00/50 | BestVal=0.2332@E0
+Epoch: 10, Time: 0.0514, Loss: 1.0382, TrainAcc: 0.7309, ValAcc: 0.6391, ES: 00/50 | BestVal=0.6391@E10
+Epoch: 20, Time: 0.0512, Loss: 0.8250, TrainAcc: 0.7575, ValAcc: 0.7471, ES: 00/50 | BestVal=0.7471@E20
+Epoch: 30, Time: 0.0514, Loss: 0.7238, TrainAcc: 0.7810, ValAcc: 0.7816, ES: 00/50 | BestVal=0.7816@E30
+Epoch: 40, Time: 0.0530, Loss: 0.6520, TrainAcc: 0.7977, ValAcc: 0.7916, ES: 00/50 | BestVal=0.7916@E40
+Epoch: 50, Time: 0.0469, Loss: 0.6017, TrainAcc: 0.8095, ValAcc: 0.7972, ES: 01/50 | BestVal=0.7979@E49
+Epoch: 60, Time: 0.0484, Loss: 0.5600, TrainAcc: 0.8201, ValAcc: 0.8014, ES: 00/50 | BestVal=0.8014@E60
+Epoch: 70, Time: 0.0487, Loss: 0.5215, TrainAcc: 0.8299, ValAcc: 0.7999, ES: 06/50 | BestVal=0.8025@E64
+Epoch: 80, Time: 0.0524, Loss: 0.4813, TrainAcc: 0.8402, ValAcc: 0.7962, ES: 16/50 | BestVal=0.8025@E64
+Epoch: 90, Time: 0.0537, Loss: 0.4609, TrainAcc: 0.8437, ValAcc: 0.7790, ES: 26/50 | BestVal=0.8025@E64
+Epoch: 100, Time: 0.0524, Loss: 0.4330, TrainAcc: 0.8549, ValAcc: 0.7904, ES: 36/50 | BestVal=0.8025@E64
+Epoch: 110, Time: 0.0531, Loss: 0.3673, TrainAcc: 0.8763, ValAcc: 0.7843, ES: 46/50 | BestVal=0.8025@E64
+Early stopped, loading model from epoch-64
+Finished running train at 05-14 03:32:06, running time = 5.97s.
+[MLP + TA] ValAcc: 0.8025, TestAcc: 0.7957
+
+(TA) ValAcc: 0.8053, TestAcc: 0.8044
+
+[{'TA': {'val_acc': 0.8024891774891775, 'test_acc': 0.7956709956709956}, 'ensemble': {'val_acc': 0.8053030303030303, 'test_acc': 0.8044372294372294}}]
+Running time: 55.05s
+An import exception occurred
+loaded dataset: ogbn-arxiv
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-arxiv/Alibaba-NLP/gte-Qwen1.5-7B-instruct-seed42-dim4096.emb
+An import exception occurred
+loaded dataset: ogbn-arxiv
+Loading pretrained LM features (title and abstract) ...
+LM_emb_path: prt_lm/ogbn-arxiv/Salesforce/SFR-Embedding-Mistral-seed42-dim4096.emb

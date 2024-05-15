@@ -49,7 +49,6 @@ coverage.xml
 *.pot
 
 # Output
-*.out
 *.txt
 !requirements.txt
 

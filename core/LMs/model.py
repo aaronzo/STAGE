@@ -1,10 +1,98 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import numpy as np
-from transformers import PreTrainedModel
+from transformers import PreTrainedModel, AutoConfig, AutoModel
 from transformers.modeling_outputs import TokenClassifierOutput
 from core.utils import init_random_state
+from peft import LoraConfig, PeftModel, TaskType
+from transformers import logging as transformers_logging
+import logging
 
+logger = logging.getLogger(__name__)
+
+transformers_logging.set_verbosity_error()
+
+
+class SentenceClsHead(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+        classifier_dropout = (
+            config.header_dropout_prob if config.header_dropout_prob is not None else config.hidden_dropout_prob
+        )
+        self.dropout = nn.Dropout(classifier_dropout)
+        self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
+
+    def forward(self, feature):
+        x = self.dropout(feature)
+        x = self.dense(x)
+        x = torch.tanh(x)
+        x = self.dropout(x)
+        x = self.out_proj(x)
+        return x
+    
+
+class SalesforceEmbeddingMistralClassifier(nn.Module):
+    def __init__(
+            self, 
+            num_labels,
+            header_dropout_prob,
+            output_dir,
+            use_peft,
+            peft_r=None,
+            peft_lora_alpha=None,
+            peft_lora_dropout=None
+        ):
+        super(SalesforceEmbeddingMistralClassifier, self).__init__()
+        pretrained_repo = 'Salesforce/SFR-Embedding-Mistral'
+        transformers_logging.set_verbosity_error()
+        logger.warning(f"inherit model weights from {pretrained_repo}")
+        self.config = AutoConfig.from_pretrained(pretrained_repo)
+        self.config.num_labels = num_labels
+        self.config.header_dropout_prob = header_dropout_prob
+        self.config.save_pretrained(save_directory=output_dir)
+        # init modules
+        self.model = AutoModel.from_pretrained(pretrained_repo, config=self.config, device_map='auto')
+        logger.info(f"Modle dtype --> {self.model.dtype}")
+        self.head = SentenceClsHead(self.config)
+        if use_peft:
+            lora_config = LoraConfig(
+                task_type=TaskType.SEQ_CLS,
+                inference_mode=False,
+                r=peft_r,
+                lora_alpha=peft_lora_alpha,
+                lora_dropout=peft_lora_dropout,
+            )
+            logger.info('Initialising PEFT Model...')
+            self.model = PeftModel(self.model, lora_config)
+            self.model.print_trainable_parameters()
+
+    def last_token_pool(last_hidden_states: torch.Tensor,
+                    attention_mask: torch.Tensor) -> torch.Tensor:
+        left_padding = (attention_mask[:, -1].sum() == attention_mask.shape[0])
+        if left_padding:
+            return last_hidden_states[:, -1]
+        else:
+            sequence_lengths = attention_mask.sum(dim=1) - 1
+            batch_size = last_hidden_states.shape[0]
+            return last_hidden_states[torch.arange(batch_size, device=last_hidden_states.device), sequence_lengths]
+
+    def average_pool(self, last_hidden_states, attention_mask):
+        last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
+        return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
+
+    def forward(self, input_ids, attention_mask=None, labels=None, return_hidden=False, preds=None):
+        base_out = self.model(input_ids=input_ids, attention_mask=attention_mask)
+        sentence_embeddings = self.average_pool(base_out.last_hidden_state, attention_mask)
+        out = self.head(sentence_embeddings)
+
+        if return_hidden:
+            sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
+            return out, sentence_embeddings
+        else:
+            return out
+        
 
 class BertClassifier(PreTrainedModel):
     def __init__(self, model, n_labels, dropout=0.0, seed=0, cla_bias=True, feat_shrink=''):
@@ -35,12 +123,12 @@ class BertClassifier(PreTrainedModel):
                                     return_dict=return_dict,
                                     output_hidden_states=True)
         # outputs[0]=last hidden state
-        emb = self.dropout(outputs['hidden_states'][-1])
+        emb = self.dropout(outputs['hidden_states'][-1])  # torch.Size([9, 512, 768])
         # Use CLS Emb as sentence emb.
-        cls_token_emb = emb.permute(1, 0, 2)[0]
+        cls_token_emb = emb.permute(1, 0, 2)[0]  # torch.Size([9, 768])
         if self.feat_shrink:
             cls_token_emb = self.feat_shrink_layer(cls_token_emb)
-        logits = self.classifier(cls_token_emb)
+        logits = self.classifier(cls_token_emb) # torch.Size([9, 40])
 
         if labels.shape[-1] == 1:
             labels = labels.squeeze()

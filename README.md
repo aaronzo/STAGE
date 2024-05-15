@@ -3,35 +3,14 @@
 
 <img src="./overview.svg">
 
-## (Aaron + Jack) Python environment setup with Conda
+## Python environment setup with Conda
 ```bash
 conda create -n cellotape python=3.8 -y && conda activate cellotape
 pip install -r requirements.txt
-```
-
-## (ORIGINAL) Python environment setup with Conda
-```bash
-conda create --name TAPE python=3.8
-conda activate TAPE
-# install faster env solver
-conda install -n base conda-libmamba-solver
-conda config --set solver libmamba   # `conda config --set solver classic` to revert
-
-
-conda install pytorch==1.12.1 -y
-conda install torchvision==0.13.1 -y
-conda install torchaudio==0.12.1 -y
-# conda install cudatoolkit=11.3 -c pytorch
-conda install cudatoolkit=11.3 -c pytorch
-conda install -c pyg pytorch-sparse
-conda install -c pyg pytorch-scatter
-conda install -c pyg pytorch-cluster
-conda install -c pyg pyg
-pip install ogb
-conda install -c dglteam/label/cu113 dgl
-pip install yacs
-pip install transformers
-pip install --upgrade accelerate
+# if you install a different version of torch, you'll need to modify the below cmds
+# check version by running `import torch; print(torch.__version__)`
+pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-2.2.1+cu121.html
+pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-2.2.1+cu121.html
 ```
 
 
@@ -39,11 +18,13 @@ pip install --upgrade accelerate
 
 Get (A) and (B) by running script:
 
-- ogbn-arxiv  | `bash data_download_scripts/ogbn_arxiv_orig_download_data.sh`
-- ogbn-products (subset) | NA
-- arxiv_2023 | NA
-- Cora | NA
-- PubMed | NA
+
+- ogbn-arxiv  | `bash download_scripts/ogbn_arxiv_orig_download_data.sh`
+- ogbn-products (subset) | `bash download_scripts/ogbn_products_download_data.sh`
+- arxiv_2023 | `bash download_scripts/arxiv_2023_download_data.sh`
+- Cora | `bash download_scripts/cora_download_data.sh`
+- PubMed | `bash download_scripts/pubmed_download_data.sh`
+
 
 ### A. Original text attributes
 
@@ -66,13 +47,24 @@ PubMed | Download the dataset [here](https://drive.google.com/file/d/1sYZX-jP6H8
 PubMed | Download the dataset [here](https://drive.google.com/file/d/166waPAjUwu7EWEvMJ0heflfp0-4EvrZS/view?usp=sharing), unzip and move it to `gpt_responses/PubMed`.|
 
 
-## 2. Fine-tuning the LMs
-### To use the orginal text attributes
+## 2. LM Stage / Generate Embeddings
+
+### To just generate and save embeddings
+```bash
+# one of ['cora' 'pubmed' 'ogbn-arxiv' 'arxiv_2023' 'ogbn-products']
+python -m core.LMs.generate_embeddings \
+--dataset_name ogbn-arxiv \
+--seed 42 \
+--lm_model_name Alibaba-NLP/gte-Qwen1.5-7B-instruct
+```
+
+
+### To fine-tune using the orginal text attributes
 ```
 WANDB_DISABLED=True TOKENIZERS_PARALLELISM=False CUDA_VISIBLE_DEVICES=0,1,2,3 python -m core.trainLM dataset ogbn-arxiv
 ```
 
-### To use the GPT responses
+### To fine-tune using the GPT responses
 ```
 WANDB_DISABLED=True TOKENIZERS_PARALLELISM=False CUDA_VISIBLE_DEVICES=0,1,2,3 python -m core.trainLM dataset ogbn-arxiv lm.train.use_gpt True
 ```
@@ -102,6 +94,10 @@ python -m core.trainGNN gnn.train.feature_type P
 python -m core.trainGNN gnn.train.feature_type ogb
 ```
 
+### (Example) use only TA embeddings from LLM embedding model
+```
+python -m core.trainEnsemble gnn.train.feature_type TA dataset arxiv_2023 seed 42 gnn.model.name SAGE
+```
 
 ## 4. Reproducibility
 Use `run.sh` to run the codes and reproduce the published results.

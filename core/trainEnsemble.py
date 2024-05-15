@@ -16,6 +16,8 @@ def run(cfg):
         all_acc.append(acc)
     end = time.time()
 
+    print(f"DATASET: {cfg.dataset}\n---> {all_acc}")
+
     if len(all_acc) > 1:
         df = pd.DataFrame(all_acc)
         for f in df.keys():
