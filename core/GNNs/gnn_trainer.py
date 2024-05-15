@@ -48,7 +48,8 @@ class GNNTrainer():
             features = data.x
         elif self.feature_type == 'TA':
             print("Loading pretrained LM features (title and abstract) ...")
-            LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seed{self.seed}-dim{self.embedding_dim}.emb"
+            # NOTE: seed=None only applies to pretrained model embeddings. For fine-tuned models this would be a data leak
+            LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seedNone-dim{self.embedding_dim}.emb"
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
                 np.memmap(LM_emb_path, mode='r',
@@ -58,7 +59,8 @@ class GNNTrainer():
             print(f"Embeddings shape: {features.shape}")
         elif self.feature_type == 'E':
             print("Loading pretrained LM features (explanations) ...")
-            LM_emb_path = f"prt_lm/{self.dataset_name}2/{self.lm_model_name}-seed{self.seed}-dim{self.embedding_dim}.emb"
+            # NOTE: seed=None only applies to pretrained model embeddings. For fine-tuned models this would be a data leak
+            LM_emb_path = f"prt_lm/{self.dataset_name}2/{self.lm_model_name}-seedNone-dim{self.embedding_dim}.emb" 
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
                 np.memmap(LM_emb_path, mode='r',
