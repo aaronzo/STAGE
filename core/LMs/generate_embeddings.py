@@ -34,7 +34,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Generate embeddings for input texts and save to disk.")
     parser.add_argument("--dataset_name", type=str, required=True, help="Name of the dataset to process.")
     parser.add_argument("--lm_model_name", type=str, required=False, default='Salesforce/SFR-Embedding-Mistral', help="Model to use for embedding generation.")
-    parser.add_argument("--add_instruction", action='store_true', help="Whether to add instruction to the text.")
+    parser.add_argument("--add_instruction", type=str, required=True, default='default', help="To add instruction to the text.")
     return parser.parse_args()
 
 
@@ -219,11 +219,14 @@ def generate_embeddings_and_save(args):
 
     embedding_dim = EMBEDDING_DIM[args.lm_model_name]
 
-    if args.add_instruction:
+    if args.add_instruction == 'default':
         # to differentiate between saved embeddings
         add_instruction_tag = ''
-    else:
+    elif args.add_instruction == 'no-task':
         add_instruction_tag = '-no-instruction' 
+    elif args.add_instruction == 'graph-aware':
+        add_instruction_tag = '-graph-aware'
+
 
     emb_dir = f"prt_lm/{args.dataset_name}"
     emb_path = f"{emb_dir}/{args.lm_model_name}{add_instruction_tag}-seed{args.seed}-dim{embedding_dim}.emb"
@@ -244,9 +247,9 @@ def generate_embeddings_and_save(args):
         )
 
     # https://github.com/microsoft/unilm/blob/9c0f1ff7ca53431fe47d2637dfe253643d94185b/e5/utils.py#L142
-    if args.add_instruction:
-        task_description = get_task_description(args.dataset_name)
-        print(f"<<Using instruction: {task_description}>>")
+    if args.add_instruction != 'no-task':
+        task_description = get_task_description(args.dataset_name, task_type=args.add_instruction)
+        print(f"Using instruction: <<{task_description}>>")
     else:
         print("<<No instruction added>>")
         task_description = None

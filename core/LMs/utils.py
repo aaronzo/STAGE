@@ -98,8 +98,7 @@ def get_task_description(
     elif task_type == "graph-aware":
         return _graph_aware_task_descriptions[dataset_name]
     else:
-        print(f"Unknown task type '{task_type}', using defaults.")
-        return get_task_description(dataset_name, "default")
+        raise ValueError(f"Unknown task type '{task_type}', using defaults.")
 
 
 def count_trainable_parameters(model: torch.nn.Module):

@@ -66,7 +66,7 @@ gdown.download_folder('https://drive.google.com/drive/folders/1hzTCaXh6qtZgoOC6_
 python -m core.LMs.generate_embeddings \
 --dataset_name ogbn-arxiv \
 --lm_model_name Alibaba-NLP/gte-Qwen1.5-7B-instruct \
---add_instruction   # adds task-specific instruction to text
+--add_instruction graph-aware   # adds task-specific instruction to text
 ```
 
 
