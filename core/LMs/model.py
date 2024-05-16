@@ -53,7 +53,9 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
         self.config.header_dropout_prob = header_dropout_prob
         self.config.save_pretrained(save_directory=output_dir)
         # init modules
-        self.model = AutoModel.from_pretrained(pretrained_repo, config=self.config, device_map='auto')
+        self.model = AutoModel.from_pretrained(
+            pretrained_repo, config=self.config, device_map='auto', torch_dtype=torch.float16
+        )
         logger.info(f"Modle dtype --> {self.model.dtype}")
         self.head = SentenceClsHead(self.config)
         if use_peft:

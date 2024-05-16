@@ -46,7 +46,7 @@ class LMTrainer():
 
         # PEFT settings
         self.use_llm = self.model_name in LLMS
-        self.task_descriptions = cfg.lm.task.descriptons
+        self.task_descriptions = cfg.lm.task.descriptions
         self.use_peft = cfg.use_peft
         self.peft_r = cfg.peft.r
         self.peft_lora_alpha = cfg.peft.lora_alpha

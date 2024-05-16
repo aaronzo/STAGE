@@ -85,6 +85,7 @@ class JointTrainer:
         self.peft_r = cfg.peft.r
         self.peft_lora_alpha = cfg.peft.lora_alpha
         self.peft_lora_dropout = cfg.peft.lora_dropout
+        self.embedding_dim = cfg.embedding_dim
 
         # ---------- GNN Settings ----------
 
@@ -95,7 +96,7 @@ class JointTrainer:
 
         # ---------- Preprocesss -----------
 
-        self.task_description = cfg.lm.task.description
+        self.task_description = cfg.lm.task.descriptions
         self.tokenizer = AutoTokenizer.from_pretrained(self.lm_model_name)
         self.task_description = get_task_description(self.dataset_name, task_type=self.task_description)
         self.dataset = preprocess_for_training(
@@ -161,7 +162,7 @@ class JointTrainer:
         print(f"Loading model {self.gnn_model_name}...")
 
         self.gnn_model = GNN(
-            in_channels=-1,  # sets layer when it sees the first tensor - bit unsafe
+            in_channels=self.embedding_dim,
             hidden_channels=self.gnn_hidden_dim,
             out_channels=self.num_classes,
             num_layers=self.gnn_num_layers,
@@ -213,7 +214,7 @@ class JointTrainer:
             weight_decay=self.weight_decay,
             save_total_limit=1,
             load_best_model_at_end=True,
-            gradient_accumulation_steps=self.grad_acc_steps,
+            gradient_accumulation_steps=self.grad_acc_steps, 
             per_device_train_batch_size=self.batch_size,
             per_device_eval_batch_size=self.batch_size*8,
             warmup_steps=warmup_steps,

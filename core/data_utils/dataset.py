@@ -82,11 +82,11 @@ class Dataset(torch.utils.data.Dataset):
         item = {key: torch.tensor(val[idx])
                 for key, val in self.encodings.items()}
         item['node_id'] = idx
-        if self.labels:
+        if hasattr(self, "labels"):
             item["labels"] = torch.tensor(self.labels[idx])
-        if self.edge_index:
+        if hasattr(self, "edge_index"):
             item["edge_index"] = self.edge_index
-        if self.adj_t:
+        if hasattr(self, "adj_t"):
             item["adj_t"] = self.adj_t
 
         return item
