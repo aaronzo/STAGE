@@ -5,7 +5,7 @@ import numpy as np
 from transformers import PreTrainedModel, AutoConfig, AutoModel
 from transformers.modeling_outputs import TokenClassifierOutput
 from core.utils import init_random_state
-from peft import LoraConfig, PeftModel, TaskType
+from peft import LoraConfig, PeftModel, TaskType, get_peft_model
 from transformers import logging as transformers_logging
 import logging
 
@@ -17,7 +17,7 @@ transformers_logging.set_verbosity_error()
 class SentenceClsHead(nn.Module):
     def __init__(self, config):
         super().__init__()
-        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+        # self.dense = nn.Linear(config.hidden_size, (config.hidden_size // 2))
         classifier_dropout = (
             config.header_dropout_prob if config.header_dropout_prob is not None else config.hidden_dropout_prob
         )
@@ -26,9 +26,9 @@ class SentenceClsHead(nn.Module):
 
     def forward(self, feature):
         x = self.dropout(feature)
-        x = self.dense(x)
-        x = torch.tanh(x)
-        x = self.dropout(x)
+        # x = self.dense(x)
+        # x = torch.tanh(x)
+        # x = self.dropout(x)
         x = self.out_proj(x)
         return x
     
@@ -53,22 +53,37 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
         self.config.header_dropout_prob = header_dropout_prob
         self.config.save_pretrained(save_directory=output_dir)
         # init modules
-        self.model = AutoModel.from_pretrained(
-            pretrained_repo, config=self.config, device_map='auto', torch_dtype=torch.float16
-        )
-        logger.info(f"Modle dtype --> {self.model.dtype}")
         self.head = SentenceClsHead(self.config)
+
+        self.model = AutoModel.from_pretrained(
+            pretrained_repo, config=self.config, device_map='auto', torch_dtype=torch.bfloat16
+        )
+        logger.info(f"Model dtype --> {self.model.dtype}")
         if use_peft:
             lora_config = LoraConfig(
-                task_type=TaskType.SEQ_CLS,
+                task_type=TaskType.FEATURE_EXTRACTION,
                 inference_mode=False,
                 r=peft_r,
                 lora_alpha=peft_lora_alpha,
                 lora_dropout=peft_lora_dropout,
             )
             logger.info('Initialising PEFT Model...')
-            self.model = PeftModel(self.model, lora_config)
+            # self.model = PeftModel(self.model, lora_config)
+            self.model = get_peft_model(self.model, lora_config)
             self.model.print_trainable_parameters()
+
+        trainable_params = sum(p.numel()
+                               for p in self.model.parameters() if p.requires_grad)
+        print(f"\nNumber of parameters in `self.model`: {trainable_params}")
+
+        trainable_params = sum(p.numel()
+                               for p in self.head.parameters() if p.requires_grad)
+        print(f"\nNumber of trainable parameters in `self.head`: {trainable_params}")
+
+        self.loss_func = nn.CrossEntropyLoss(
+            label_smoothing=0.3, reduction='mean')
+
+
 
     def last_token_pool(last_hidden_states: torch.Tensor,
                     attention_mask: torch.Tensor) -> torch.Tensor:
@@ -85,15 +100,23 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
         return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
 
     def forward(self, input_ids, attention_mask=None, labels=None, return_hidden=False, preds=None):
-        base_out = self.model(input_ids=input_ids, attention_mask=attention_mask)
-        sentence_embeddings = self.average_pool(base_out.last_hidden_state, attention_mask)
-        out = self.head(sentence_embeddings)
+        base_out = self.model(input_ids=input_ids, attention_mask=attention_mask)  # torch.Size([9, 512, 4096])
+        print(f"base_out.last_hidden_state.shape --> {base_out.last_hidden_state.shape}")
+        sentence_embeddings = self.average_pool(base_out.last_hidden_state, attention_mask)  # torch.Size([9, 4096])
+        print(f"sentence_embeddings.shape --> {sentence_embeddings.shape}")
+        logits = self.head(sentence_embeddings)  # torch.Size([9, 7])
+        print(f"logits.shape --> {logits.shape}")
 
-        if return_hidden:
-            sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
-            return out, sentence_embeddings
-        else:
-            return out
+        loss = self.loss_func(logits, labels)
+
+
+        return TokenClassifierOutput(loss=loss, logits=logits)
+
+        # if return_hidden:
+        #     sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
+        #     return logits, sentence_embeddings
+        # else:
+        #     return logits
         
 
 class BertClassifier(PreTrainedModel):
