@@ -6,7 +6,10 @@ import pandas as pd
 
 # found here --> https://www.kaggle.com/datasets/dataup1/ogbn-products?resource=download
 label_mapping_file = 'dataset/ogbn_products/labelidx2productcategory.csv'
-assert os.path.exists(label_mapping_file), "Label mapping file not found, please download it from https://www.kaggle.com/datasets/dataup1/ogbn-products?resource=download and save it to `dataset/ogbn_products/labelidx2productcategory.csv`"
+assert os.path.exists(label_mapping_file), (
+    "Label mapping file not found, please download it from https://www.kaggle.com/datasets/dataup1/ogbn-products?resource=download"
+    "and save it to `dataset/ogbn_products/labelidx2productcategory.csv`"
+)
 df = pd.read_csv(label_mapping_file)
 
 mapping = {}

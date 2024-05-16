@@ -58,7 +58,10 @@ settings.json
 docs/_build/
 
 # dataset
-dataset/
+dataset/*
+!dataset/ogbn_products
+dataset/ogbn_products/*
+!dataset/ogbn_products/labelidx2productcategory.csv
 gpt_responses/
 gpt_preds/
 
@@ -68,5 +71,6 @@ results/
 output/
 *.out
 prt_lm
+tmp_prt_lm
 .vscode
 
