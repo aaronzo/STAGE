@@ -7,7 +7,8 @@ from transformers import AutoTokenizer
 import logging
 from textwrap import dedent
 from typing import Literal, Union
-
+from core.GNNs.gnn_utils import Evaluator
+from ogb.nodeproppred import Evaluator as OgbEvaluator
 
 _default_task_descriptions = {
     'ogbn-arxiv': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
@@ -71,17 +72,18 @@ def get_detailed_instruct(task_description: str, query: str) -> str:
     return f'Instruct: {task_description}\nQuery: {query}'
 
 
-def get_evaluator(dataset_name: str):
-    from core.GNNs.gnn_utils import Evaluator
+def get_evaluator(dataset_name: str, preds: np.ndarray, labels: np.ndarray):
+    cls = OgbEvaluator if dataset_name.startswith("ogbn") else Evaluator
+    evaluator = cls(name=dataset_name)
 
-    _evaluator = Evaluator(dataset_name)
-    def evaluator(self, pred, labels):
-        return _evaluator.eval({
-            "y_pred": pred.argmax(dim=-1, keepdim=True),
-            "y_true": labels.view(-1, 1)
-        })["acc"]
+    def _eval_fn(idx):
+        out = evaluator.eval({
+            "y_true": torch.tensor(labels[idx]).view(-1, 1),
+            "y_pred": torch.tensor(np.argmax(preds[idx], -1)).view(-1, 1),
+        })
+        return out["acc"]
     
-    return evaluator
+    return _eval_fn
 
 
 def get_task_description(

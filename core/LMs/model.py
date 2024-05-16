@@ -52,6 +52,8 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
         self.config.num_labels = num_labels
         self.config.header_dropout_prob = header_dropout_prob
         self.config.save_pretrained(save_directory=output_dir)
+        self.emb = None
+        self.pred = None
         # init modules
         self.head = SentenceClsHead(self.config)
 
@@ -102,7 +104,7 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
         last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
         return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
 
-    def forward(self, input_ids, attention_mask=None, labels=None, return_hidden=False, preds=None):
+    def forward(self, input_ids, attention_mask=None, labels=None, return_hidden=False, preds=None, node_id=None):
         base_out = self.model(input_ids=input_ids, attention_mask=attention_mask)  # torch.Size([9, 512, 4096])
         # print(f"base_out.last_hidden_state.shape --> {base_out.last_hidden_state.shape}")
         sentence_embeddings = self.average_pool(base_out.last_hidden_state, attention_mask)  # torch.Size([9, 4096])
@@ -110,17 +112,30 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
         logits = self.head(sentence_embeddings)  # torch.Size([9, 7])
         # print(f"logits.shape --> {logits.shape}")
 
+        if self.emb is not None and self.pred is not None:
+            # Save prediction and embeddings to disk (memmap)
+            batch_nodes = node_id.cpu().numpy()
+            # upcast `bfloat16` tensor using `.float()` -> https://stackoverflow.com/questions/78128662/converting-pytorch-bfloat16-tensors-to-numpy-throws-typeerror
+            self.emb[batch_nodes] = sentence_embeddings.cpu().float().numpy().astype(np.float16)
+            self.pred[batch_nodes] = logits.cpu().float().numpy().astype(np.float16)
+
         loss = self.loss_func(logits, labels)
 
+        output = TokenClassifierOutput(loss=loss, logits=logits)
 
-        return TokenClassifierOutput(loss=loss, logits=logits)
+        if return_hidden:
+            return output, sentence_embeddings
 
-        # if return_hidden:
-        #     sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
-        #     return logits, sentence_embeddings
-        # else:
-        #     return logits
-        
+        return output
+
+
+    @torch.no_grad()
+    def emb(self, input_ids, attention_mask=None):
+        base_out = self.model(input_ids=input_ids, attention_mask=attention_mask)  # torch.Size([9, 512, 4096])
+        # print(f"base_out.last_hidden_state.shape --> {base_out.last_hidden_state.shape}")
+        sentence_embeddings = self.average_pool(base_out.last_hidden_state, attention_mask)  # torch.Size([9, 4096])
+        return sentence_embeddings.detach().cpu().numpy()
+
 
 class BertClassifier(PreTrainedModel):
     def __init__(self, model, n_labels, dropout=0.0, seed=0, cla_bias=True, feat_shrink=''):
@@ -191,7 +206,7 @@ class BertClaInfModel(PreTrainedModel):
         emb = bert_outputs['hidden_states'][-1]
         # Use CLS Emb as sentence emb.
         cls_token_emb = emb.permute(1, 0, 2)[0]
-        if self.feat_shrink:
+        if self.feat_shrink:    
             cls_token_emb = self.bert_classifier.feat_shrink_layer(
                 cls_token_emb)
         logits = self.bert_classifier.classifier(cls_token_emb)

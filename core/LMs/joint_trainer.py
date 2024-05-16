@@ -29,7 +29,7 @@ class JointLmmGnnModel(nn.Module):
 
     def forward(self, input_ids, attention_mask=None, labels=None, edge_index=None):
         _, embedding = self.llm_model(input_ids, attention_mask=attention_mask, return_hidden=True)
-
+        # adj_t vs edge_index resolve later
         logits = self.gnn_model(embedding, edge_index)
         loss = None
         if labels is not None:
@@ -109,6 +109,7 @@ class JointTrainer:
         )
         self.num_nodes = self.dataset.num_nodes
         self.num_classes = self.dataset.num_classes
+
         self.train_dataset = self.dataset.train_subset()
         self.val_dataset = self.dataset.val_subset()
         self.test_dataset = self.dataset.test_subset()
@@ -173,31 +174,11 @@ class JointTrainer:
 
         trainable_params = count_trainable_parameters(self.gnn_model)
         print(f"\nNumber of GNN parameters: {trainable_params}")
-    
-
-    @ torch.no_grad()
-    def _evaluate(self):
-        # TODO i guess this is wrong
-        self.model.eval()
-        logits = self.model(self.data.x, self.data.edge_index)
-        val_acc = self.evaluator(
-            logits[self.data.val_mask], self.data.y[self.data.val_mask])
-        test_acc = self.evaluator(
-            logits[self.dataset.test_mask], self.data.y[self.data.test_mask])
-        return val_acc, test_acc, logits
-
-    @ torch.no_grad()
-    def eval_and_save(self):
-        torch.save(self.model.state_dict(), self.ckpt_dir)
-        val_acc, test_acc, logits = self._evaluate()
-        print(
-            f'[{self.model_name}] ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
-        res = {'val_acc': val_acc, 'test_acc': test_acc}
-        return logits, res
 
     @time_logger
     def train(self):
         # Define training parameters
+        self.model.train()
         eq_batch_size = self.batch_size * 4
         train_steps = self.num_nodes // eq_batch_size + 1
         eval_steps = self.eval_patience // eq_batch_size
@@ -237,6 +218,41 @@ class JointTrainer:
         self.trainer.train()
         torch.save(self.model.state_dict(), init_path(f"{self.ckpt_dir}.ckpt"))
         print(f'Joint Model saved to {self.ckpt_dir}.ckpt')
+
+    @time_logger
+    @torch.no_grad()
+    def eval_and_save(self):
+        pred = np.memmap(init_path(f"{self.ckpt_dir}.pred"),
+                dtype=np.float16,
+                mode='w+',
+                shape=(self.num_nodes, self.num_classes))
+    
+        self.model.eval()  # this should be enough, if not:
+        # self.model.forward = torch.no_grad(self.model.forward)
+
+        inference_args = TrainingArguments(
+            output_dir=self.output_dir,
+            do_train=False,
+            do_predict=True,
+            per_device_eval_batch_size=self.batch_size*8,
+            dataloader_drop_last=False,
+            dataloader_num_workers=1,
+            fp16_full_eval=True,
+        )
+
+        trainer = Trainer(model=self.model, args=inference_args)
+        prediction_outputs = trainer.predict(self.inf_dataset)
+        pred[:] = prediction_outputs
+        labels = np.array(self.dataset.labels)
+        eval = get_evaluator(self.dataset_name, pred, labels)
+
+        train_acc = eval(self.dataset.train_mask)
+        val_acc = eval(self.dataset.val_mask)
+        test_acc = eval(self.dataset.test_mask)
+        print(
+            f'[LM] TrainAcc: {train_acc:.4f}, ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
+        return {'TrainAcc': train_acc, 'ValAcc': val_acc, 'TestAcc': test_acc}
+
 
 
 def compute_metrics(p):
