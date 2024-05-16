@@ -12,3 +12,4 @@ ogb
 numpy
 python-graphblas
 datasets
+accelerate

@@ -75,9 +75,6 @@ class LMTrainer():
         self.test_dataset = torch.utils.data.Subset(
             self.dataset, self.data.test_mask.nonzero().squeeze().tolist())
 
-    @time_logger
-    def train(self):
-
         # Define pretrained tokenizer and model
         if self.model_name in LLMS:
             self.model = LLMS[self.model_name](
@@ -105,8 +102,10 @@ class LMTrainer():
 
         trainable_params = sum(p.numel()
                                for p in self.model.parameters() if p.requires_grad)
-        print(f"\nNumber of parameters: {trainable_params}")
+        print(f"\nNumber of ptrainable arameters: {trainable_params}")
 
+    @time_logger
+    def train(self):
 
         # Define training parameters
         eq_batch_size = self.batch_size * 4
@@ -132,7 +131,8 @@ class LMTrainer():
             warmup_steps=warmup_steps,
             num_train_epochs=self.epochs,
             dataloader_num_workers=1,
-            fp16=True,
+            # fp16=True,    # NOTE: this will cause OOM TODO: learn why?
+            bf16=True,      # TODO: learn why this + model loaded in bfloat16 uses less memory than model loaded in 8bit?
             dataloader_drop_last=True,
         )
         self.trainer = Trainer(

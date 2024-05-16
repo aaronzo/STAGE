@@ -27,9 +27,10 @@ class JointLmmGnnModel(nn.Module):
         self.num_classes = num_classes
         self.loss_func = loss_func
 
-    def forward(self, input_ids, attention_mask=None, labels=None, adj_t=None):
+    def forward(self, input_ids, attention_mask=None, labels=None, edge_index=None):
         _, embedding = self.llm_model(input_ids, attention_mask=attention_mask, return_hidden=True)
-        logits = self.gnn_model(embedding, adj_t)
+
+        logits = self.gnn_model(embedding, edge_index)
         loss = None
         if labels is not None:
             self.loss_func(logits.view(-1, self.num_classes), labels.view(-1))
