@@ -32,8 +32,8 @@ def free_memory(*args):
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate embeddings for input texts and save to disk.")
     parser.add_argument("--dataset_name", type=str, required=True, help="Name of the dataset to process.")
-    parser.add_argument("--seed", type=int, required=True, help="Random seed for reproducibility.")
     parser.add_argument("--lm_model_name", type=str, required=False, default='Salesforce/SFR-Embedding-Mistral', help="Model to use for embedding generation.")
+    parser.add_argument("--add_instruction", action='store_true', help="Whether to add instruction to the text.")
     return parser.parse_args()
 
 
@@ -71,7 +71,6 @@ def generate_gte_qwen_7b_instruct(text, emb_path, task_description):
         torch_dtype=torch.float16
         )
 
-    logger.info(f"Using instruction <<{task_description}>>")
     text = [get_detailed_instruct(task_description, t) for t in text]
 
 
@@ -118,7 +117,7 @@ def generate_sfr_embedding_mistral(text, emb_path, task_description):
     def get_detailed_instruct(task_description: str, query: str) -> str:
         return f'Instruct: {task_description}\nQuery: {query}'
 
-    BATCH_SIZE = 2
+    BATCH_SIZE = 64
     max_length = 2048
     EMBED_DIM = 4096
     num_nodes = len(text)  # 169343
@@ -134,10 +133,7 @@ def generate_sfr_embedding_mistral(text, emb_path, task_description):
         torch_dtype=torch.float16
         )
     
-
-    logger.info(f"Using instruction <<{task_description}>>")
     text = [get_detailed_instruct(task_description, t) for t in text]
-
 
     for i in tqdm(range(0, len(text), BATCH_SIZE)):
         input_texts = text[i: i+BATCH_SIZE]
@@ -166,18 +162,70 @@ def generate_sfr_embedding_mistral(text, emb_path, task_description):
     emb.flush()
     return
 
+def generate_llm2vec_llama3(text, emb_path, task_description):
+    '''
+    ref --> https://github.com/McGill-NLP/llm2vec/blob/main/examples/classification.py
+    '''
+    from llm2vec import LLM2Vec
+
+    BATCH_SIZE = 128
+    max_length = 2048
+    EMBED_DIM = 4096
+    num_nodes = len(text)  # 169343
+
+    print("Loading model...")
+    model = LLM2Vec.from_pretrained(
+        "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp",
+        peft_model_name_or_path="McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-supervised",
+        device_map="auto",
+        torch_dtype=torch.bfloat16,
+        max_length=max_length,
+    )
+
+    def append_instruction(instruction, sentences):
+        new_sentences = []
+        for s in sentences:
+            new_sentences.append([instruction, s, 0])
+        return new_sentences
+
+    print(f"Encoding {len(text)} texts...")
+    texts = [t if type(t) == str else '' for t in text] # some nan values in text
+    nan_values = [t for t in text if type(t) != str]
+    if len(nan_values) > 0:
+        print(f"Found {len(nan_values)} nan values in text.")
+
+    if task_description:
+        texts = append_instruction(task_description, texts)
+            
+    emb = np.memmap(emb_path, dtype=np.float16, mode='w+', shape=(num_nodes, EMBED_DIM))
+    
+    emb[:] = np.asarray(model.encode(texts, batch_size=BATCH_SIZE))
+
+    emb.flush()
+    return
+
+
 EMBEDDING_DIM = {
     'Salesforce/SFR-Embedding-Mistral': 4096,
     'Alibaba-NLP/gte-Qwen1.5-7B-instruct': 4096,
+    'McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp': 4096,
 }
 
 @torch.no_grad()
 def generate_embeddings_and_save(args):
 
+    args.seed = None  # not needed for pretrained model embeddings as we aren't training anything
+
     embedding_dim = EMBEDDING_DIM[args.lm_model_name]
 
+    if args.add_instruction:
+        # to differentiate between saved embeddings
+        add_instruction_tag = ''
+    else:
+        add_instruction_tag = '-no-instruction' 
+
     emb_dir = f"prt_lm/{args.dataset_name}"
-    emb_path = f"{emb_dir}/{args.lm_model_name}-seed{args.seed}-dim{embedding_dim}.emb"
+    emb_path = f"{emb_dir}/{args.lm_model_name}{add_instruction_tag}-seed{args.seed}-dim{embedding_dim}.emb"
 
     os.makedirs('/'.join(emb_path.split('/')[:-1]), exist_ok=True)
 
@@ -191,17 +239,27 @@ def generate_embeddings_and_save(args):
         print(f"ogbn-products example: {text[0]}")
     else:
         data, num_classes, text = load_data(
-            dataset=args.dataset_name, use_text=True, use_gpt=False, seed=args.seed
+            dataset=args.dataset_name, use_text=True, use_gpt=False, seed=42
         )
 
     # https://github.com/microsoft/unilm/blob/9c0f1ff7ca53431fe47d2637dfe253643d94185b/e5/utils.py#L142
-    task_description = get_task_description(args.dataset_name)
+    if args.add_instruction:
+        task_description = get_task_description(args.dataset_name)
+        print(f"<<Using instruction: {task_description}>>")
+    else:
+        print("<<No instruction added>>")
+        task_description = None
+
 
     if args.lm_model_name == 'Salesforce/SFR-Embedding-Mistral':
         generate_sfr_embedding_mistral(text, emb_path, task_description)
     elif args.lm_model_name == 'Alibaba-NLP/gte-Qwen1.5-7B-instruct':
         huggingface_hub.login(os.environ['HF_TOKEN'])
         generate_gte_qwen_7b_instruct(text, emb_path, task_description)
+    elif args.lm_model_name == 'McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp':
+        generate_llm2vec_llama3(text, emb_path, task_description)
+    else:
+        raise ValueError(f"Model {args.lm_model_name} not supported")
 
     print("Embeddings generated and saved successfully.")
 
