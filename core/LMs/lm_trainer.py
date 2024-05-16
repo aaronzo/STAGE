@@ -131,7 +131,8 @@ class LMTrainer():
             warmup_steps=warmup_steps,
             num_train_epochs=self.epochs,
             dataloader_num_workers=1,
-            fp16=True,
+            # fp16=True,    # NOTE: this will cause OOM TODO: learn why?
+            bf16=True,      # TODO: learn why this + model loaded in bfloat16 uses less memory than model loaded in 8bit?
             dataloader_drop_last=True,
         )
         self.trainer = Trainer(
