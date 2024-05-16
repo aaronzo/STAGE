@@ -10,6 +10,7 @@ def run(cfg):
     all_acc = []
     start = time.time()
     for seed in seeds:
+        print(f"### Run for seed {seed}...")
         cfg.seed = seed
         ensembler = EnsembleTrainer(cfg)
         acc = ensembler.train()
