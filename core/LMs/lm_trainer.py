@@ -6,7 +6,7 @@ from core.LMs.model import BertClassifier, BertClaInfModel, SalesforceEmbeddingM
 from core.data_utils.dataset import Dataset
 from core.data_utils.load import load_data
 from core.utils import init_path, time_logger
-from core.LMs.utils import get_task_description, get_detailed_instruct
+from core.LMs.utils import get_task_description, get_detailed_instruct, get_evaluator
 
 LLMS = {
     'Salesforce/SFR-Embedding-Mistral': SalesforceEmbeddingMistralClassifier,
@@ -183,27 +183,13 @@ class LMTrainer():
         trainer = Trainer(model=inf_model, args=inference_args)
         prediction_output = trainer.predict(self.inf_dataset)
         pred[:] = prediction_output.predictions
-    
-        # this logic is horrible but im scared to change:
+        labels = np.array(self.dataset.labels)
+        eval = get_evaluator(self.dataset_name, pred, labels)
 
-        if "ogbn" in self.dataset_name:
-            from ogb.nodeproppred import Evaluator
-            _evaluator = Evaluator(name=self.dataset_name)
-        else:
-            from core.GNNs.gnn_utils import Evaluator
-            _evaluator = Evaluator(name=self.dataset_name)
+        train_acc = eval(self.dataset.train_mask)
+        val_acc = eval(self.dataset.val_mask)
+        test_acc = eval(self.dataset.test_mask)
 
-        def evaluator(preds, labels): return _evaluator.eval({
-            "y_true": torch.tensor(labels).view(-1, 1),
-            "y_pred": torch.tensor(preds).view(-1, 1),
-        })["acc"]
-
-        def eval(x): return evaluator(
-            np.argmax(pred[x], -1), self.data.y[x])
-
-        train_acc = eval(self.data.train_mask)
-        val_acc = eval(self.data.val_mask)
-        test_acc = eval(self.data.test_mask)
         print(
             f'[LM] TrainAcc: {train_acc:.4f}, ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
         return {'TrainAcc': train_acc, 'ValAcc': val_acc, 'TestAcc': test_acc}

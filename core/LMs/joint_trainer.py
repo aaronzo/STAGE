@@ -110,10 +110,9 @@ class JointTrainer:
         self.num_nodes = self.dataset.num_nodes
         self.num_classes = self.dataset.num_classes
 
-        # use later, better pattern
-        # self.train_dataset = self.dataset.train_subset()
-        # self.val_dataset = self.dataset.val_subset()
-        # self.test_dataset = self.dataset.test_subset()
+        self.train_dataset = self.dataset.train_subset()
+        self.val_dataset = self.dataset.val_subset()
+        self.test_dataset = self.dataset.test_subset()
         
         # ---------- Init Sub Models -----------
         
@@ -245,21 +244,7 @@ class JointTrainer:
         prediction_outputs = trainer.predict(self.inf_dataset)
         pred[:] = prediction_outputs
         labels = np.array(self.dataset.labels)
-
-        if "ogbn" in self.dataset_name:
-            from ogb.nodeproppred import Evaluator
-            _evaluator = Evaluator(name=self.dataset_name)
-        else:
-            from core.GNNs.gnn_utils import Evaluator
-            _evaluator = Evaluator(name=self.dataset_name)
-
-        def evaluator(preds, labels): return _evaluator.eval({
-            "y_true": torch.tensor(labels).view(-1, 1),
-            "y_pred": torch.tensor(preds).view(-1, 1),
-        })["acc"]
-
-        def eval(x): return evaluator(
-            np.argmax(pred[x], -1), labels)
+        eval = get_evaluator(self.dataset_name, pred, labels)
 
         train_acc = eval(self.dataset.train_mask)
         val_acc = eval(self.dataset.val_mask)
