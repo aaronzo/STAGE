@@ -39,10 +39,13 @@ class LMTrainer():
         self.eval_patience = cfg.lm.train.eval_patience
         self.grad_acc_steps = cfg.lm.train.grad_acc_steps
         self.lr = cfg.lm.train.lr
+        self.embedding_dim = cfg.embedding_dim
+        self.max_steps = cfg.lm.train.max_steps
 
         self.use_gpt_str = "2" if cfg.lm.train.use_gpt else ""
         self.output_dir = f'output/{self.dataset_name}{self.use_gpt_str}/{self.model_name}-seed{self.seed}'
-        self.ckpt_dir = f'prt_lm/{self.dataset_name}{self.use_gpt_str}/{self.model_name}-seed{self.seed}'
+        self.ckpt_dir = f'prt_lm_finetuned/{self.dataset_name}{self.use_gpt_str}/{self.model_name}-seed{self.seed}'
+        self.logging_steps = cfg.logging_steps
 
         # PEFT settings
         self.use_llm = self.model_name in LLMS
@@ -109,12 +112,13 @@ class LMTrainer():
 
         # Define training parameters
         eq_batch_size = self.batch_size * 4
-        train_steps = self.num_nodes // eq_batch_size + 1
+        train_steps = self.max_steps if self.max_steps else self.num_nodes // eq_batch_size + 1
         eval_steps = self.eval_patience // eq_batch_size
         warmup_steps = int(self.warmup_epochs * train_steps)
 
         # Define Trainer
         args = TrainingArguments(
+            max_steps=train_steps,
             output_dir=self.output_dir,
             do_train=True,
             do_eval=True,
@@ -134,6 +138,7 @@ class LMTrainer():
             # fp16=True,    # NOTE: this will cause OOM TODO: learn why?
             bf16=True,      # TODO: learn why this + model loaded in bfloat16 uses less memory than model loaded in 8bit?
             dataloader_drop_last=True,
+            logging_steps=self.logging_steps,
         )
         self.trainer = Trainer(
             model=self.model,
@@ -146,8 +151,9 @@ class LMTrainer():
 
         # Train pre-trained model
         self.trainer.train()
+        print('Saving model to disk...')
         torch.save(self.model.state_dict(), init_path(f"{self.ckpt_dir}.ckpt"))
-        print(f'LM saved to {self.ckpt_dir}.ckpt')
+        print(f'\nLM saved to {self.ckpt_dir}.ckpt\n')
 
     @time_logger
     @torch.no_grad()
@@ -156,19 +162,21 @@ class LMTrainer():
                         dtype=np.float16,
                         mode='w+',
                         shape=(self.num_nodes, self.n_labels))
-        if not self.use_llm:
-            emb = np.memmap(init_path(f"{self.ckpt_dir}.emb"),
-                            dtype=np.float16,
-                            mode='w+',
-                            shape=(self.num_nodes, self.feat_shrink if self.feat_shrink else 768))
+        emb = np.memmap(init_path(f"{self.ckpt_dir}.emb"),
+                        dtype=np.float16,
+                        mode='w+',
+                        shape=(self.num_nodes, self.feat_shrink if self.feat_shrink else self.embedding_dim))
 
+        if not self.use_llm:
             inf_model = BertClaInfModel(
                 self.model, emb, pred, feat_shrink=self.feat_shrink)
             
         else:
-            inf_model = self.model
             self.model.eval()  # this should be enough, if not
             # self.model.forward = torch.no_grad(self.model.forward)
+            self.model.emb = emb
+            self.model.pred = pred
+            inf_model = self.model
 
         inference_args = TrainingArguments(
             output_dir=self.output_dir,
@@ -181,8 +189,9 @@ class LMTrainer():
         )
 
         trainer = Trainer(model=inf_model, args=inference_args)
+        print(f"Running inference...")
         prediction_output = trainer.predict(self.inf_dataset)
-        pred[:] = prediction_output.predictions
+        # pred[:] = prediction_output.predictions
         labels = np.array(self.dataset.labels)
         eval = get_evaluator(self.dataset_name, pred, labels)
 
@@ -192,4 +201,7 @@ class LMTrainer():
 
         print(
             f'[LM] TrainAcc: {train_acc:.4f}, ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
+        
+        print(f"Saved embeddings to {self.ckpt_dir}.ckpt")
+        print(f"Saved predictions to {self.ckpt_dir}.pred")
         return {'TrainAcc': train_acc, 'ValAcc': val_acc, 'TestAcc': test_acc}
