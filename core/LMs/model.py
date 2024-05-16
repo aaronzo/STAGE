@@ -65,7 +65,7 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
         logger.info(f"Model dtype --> {self.model.dtype}")
         if use_peft:
             lora_config = LoraConfig(
-                task_type=TaskType.FEATURE_EXTRACTION,
+                task_type=TaskType.FEATURE_EXTRACTION,  # https://github.com/huggingface/peft/blob/v0.8.2/src/peft/utils/peft_types.py#L68-L73
                 inference_mode=False,
                 r=peft_r,
                 lora_alpha=peft_lora_alpha,
