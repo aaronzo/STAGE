@@ -15,6 +15,7 @@ import os
 import logging
 import gc
 import huggingface_hub
+from core.LMs.utils import *
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -242,19 +243,13 @@ def generate_embeddings_and_save(args):
         )
 
     # https://github.com/microsoft/unilm/blob/9c0f1ff7ca53431fe47d2637dfe253643d94185b/e5/utils.py#L142
-    task_descriptions = {
-        'ogbn-arxiv': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
-        'arxiv_2023': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
-        'cora': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
-        'pubmed': 'Identify the main and secondary category of Arxiv papers based on the titles and abstracts',
-        'ogbn-products': 'Identify the main and secondary category of this product based on the titles and description',
-    }
     if args.add_instruction:
-        print(f"<<Using instruction: {task_descriptions[args.dataset_name]}>>")
-        task_description = task_descriptions[args.dataset_name]
+        task_description = get_task_description(args.dataset_name)
+        print(f"<<Using instruction: {task_description}>>")
     else:
         print("<<No instruction added>>")
         task_description = None
+
 
     if args.lm_model_name == 'Salesforce/SFR-Embedding-Mistral':
         generate_sfr_embedding_mistral(text, emb_path, task_description)

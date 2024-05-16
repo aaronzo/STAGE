@@ -6,6 +6,7 @@ from core.LMs.model import BertClassifier, BertClaInfModel, SalesforceEmbeddingM
 from core.data_utils.dataset import Dataset
 from core.data_utils.load import load_data
 from core.utils import init_path, time_logger
+from core.LMs.utils import get_task_description, get_detailed_instruct
 
 LLMS = {
     'Salesforce/SFR-Embedding-Mistral': SalesforceEmbeddingMistralClassifier,
@@ -43,6 +44,14 @@ class LMTrainer():
         self.output_dir = f'output/{self.dataset_name}{self.use_gpt_str}/{self.model_name}-seed{self.seed}'
         self.ckpt_dir = f'prt_lm/{self.dataset_name}{self.use_gpt_str}/{self.model_name}-seed{self.seed}'
 
+        # PEFT settings
+        self.use_llm = self.model_name in LLMS
+        self.task_descriptions = cfg.lm.task.descriptions
+        self.use_peft = cfg.use_peft
+        self.peft_r = cfg.peft.r
+        self.peft_lora_alpha = cfg.peft.lora_alpha
+        self.peft_lora_dropout = cfg.peft.lora_dropout
+
         # Preprocess data
         data, num_classes, text = load_data(
             dataset=self.dataset_name, use_text=True, use_gpt=cfg.lm.train.use_gpt, seed=self.seed)
@@ -50,10 +59,13 @@ class LMTrainer():
         self.num_nodes = data.y.size(0)
         self.n_labels = num_classes
 
+        if self.use_llm:
+            task_description = get_task_description(self.dataset_name, task_type=self.task_descriptions)
+            text = [get_detailed_instruct(task_description, t) for t in text]            
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         X = tokenizer(text, padding=True, truncation=True, max_length=512)
 
-        self.dataset = Dataset(X, data.y.tolist())
+        self.dataset = Dataset(X, labels=data.y.tolist())
         self.inf_dataset = self.dataset
 
         self.train_dataset = torch.utils.data.Subset(
@@ -63,11 +75,6 @@ class LMTrainer():
         self.test_dataset = torch.utils.data.Subset(
             self.dataset, self.data.test_mask.nonzero().squeeze().tolist())
 
-
-
-    @time_logger
-    def train(self):
-
         # Define pretrained tokenizer and model
         if self.model_name in LLMS:
             self.model = LLMS[self.model_name](
@@ -75,10 +82,10 @@ class LMTrainer():
                 header_dropout_prob=self.cla_dropout,
                 output_dir=self.output_dir,
                 use_peft=True,
-                peft_r=8,
-                peft_lora_alpha=16,
-                peft_lora_dropout=0.1, # TODO: make these configurable
-                )
+                peft_r=self.peft_r,
+                peft_lora_alpha=self.peft_lora_alpha,
+                peft_lora_dropout=self.peft_lora_dropout,
+            )
         else:
             bert_model = AutoModel.from_pretrained(self.model_name)
             self.model = BertClassifier(bert_model,
@@ -95,8 +102,10 @@ class LMTrainer():
 
         trainable_params = sum(p.numel()
                                for p in self.model.parameters() if p.requires_grad)
-        print(f"\nNumber of parameters: {trainable_params}")
+        print(f"\nNumber of ptrainable arameters: {trainable_params}")
 
+    @time_logger
+    def train(self):
 
         # Define training parameters
         eq_batch_size = self.batch_size * 4
@@ -122,7 +131,8 @@ class LMTrainer():
             warmup_steps=warmup_steps,
             num_train_epochs=self.epochs,
             dataloader_num_workers=1,
-            fp16=True,
+            # fp16=True,    # NOTE: this will cause OOM TODO: learn why?
+            bf16=True,      # TODO: learn why this + model loaded in bfloat16 uses less memory than model loaded in 8bit?
             dataloader_drop_last=True,
         )
         self.trainer = Trainer(

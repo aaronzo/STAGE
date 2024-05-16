@@ -20,6 +20,18 @@ def set_cfg(cfg):
     cfg.lm = CN()
 
     # ------------------------------------------------------------------------ #
+    # PEFT Model options
+    # ------------------------------------------------------------------------ #
+    
+    cfg.peft = CN()
+    cfg.use_peft = True
+    cfg.peft.r = 8
+    cfg.peft.lora_alpha = 16
+    cfg.peft.lora_dropout = 0.1
+    cfg.tokenizer = CN()
+    cfg.tokenizer.max_length = 512
+
+    # ------------------------------------------------------------------------ #
     # GNN Model options
     # ------------------------------------------------------------------------ #
     cfg.gnn.model = CN()
@@ -59,6 +71,8 @@ def set_cfg(cfg):
     cfg.lm.model.name = 'Salesforce/SFR-Embedding-Mistral'  # 'microsoft/deberta-base' # 
     cfg.lm.model.feat_shrink = ""
     cfg.embedding_dim = 4096
+    cfg.lm.task = CN()
+    cfg.lm.task.descriptions = "default"
 
     # ------------------------------------------------------------------------ #
     # LM Training options
