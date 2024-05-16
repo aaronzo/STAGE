@@ -188,11 +188,14 @@ def generate_llm2vec_llama3(text, emb_path, task_description):
         return new_sentences
 
     print(f"Encoding {len(text)} texts...")
-    if task_description:
-        texts = append_instruction(task_description, text)
-    else:
-        texts = [t for t in text]
+    texts = [t if type(t) == str else '' for t in text] # some nan values in text
+    nan_values = [t for t in text if type(t) != str]
+    if len(nan_values) > 0:
+        print(f"Found {len(nan_values)} nan values in text.")
 
+    if task_description:
+        texts = append_instruction(task_description, texts)
+            
     emb = np.memmap(emb_path, dtype=np.float16, mode='w+', shape=(num_nodes, EMBED_DIM))
     
     emb[:] = np.asarray(model.encode(texts, batch_size=BATCH_SIZE))
