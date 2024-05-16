@@ -17,18 +17,18 @@ transformers_logging.set_verbosity_error()
 class SentenceClsHead(nn.Module):
     def __init__(self, config):
         super().__init__()
-        # self.dense = nn.Linear(config.hidden_size, (config.hidden_size // 2))
+        self.dense = nn.Linear(config.hidden_size, (config.hidden_size // 2))
         classifier_dropout = (
             config.header_dropout_prob if config.header_dropout_prob is not None else config.hidden_dropout_prob
         )
         self.dropout = nn.Dropout(classifier_dropout)
-        self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
+        self.out_proj = nn.Linear((config.hidden_size // 2), config.num_labels)
 
     def forward(self, feature):
         x = self.dropout(feature)
-        # x = self.dense(x)
-        # x = torch.tanh(x)
-        # x = self.dropout(x)
+        x = self.dense(x)
+        x = torch.tanh(x)
+        x = self.dropout(x)
         x = self.out_proj(x)
         return x
     
@@ -56,7 +56,11 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
         self.head = SentenceClsHead(self.config)
 
         self.model = AutoModel.from_pretrained(
-            pretrained_repo, config=self.config, device_map='auto', torch_dtype=torch.bfloat16
+            pretrained_repo, 
+            config=self.config, 
+            device_map='auto', 
+            load_in_8bit=True,
+            # torch_dtype=torch.bfloat16   # don't think this plays nice with PEFT
         )
         logger.info(f"Model dtype --> {self.model.dtype}")
         if use_peft:
@@ -68,7 +72,6 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
                 lora_dropout=peft_lora_dropout,
             )
             logger.info('Initialising PEFT Model...')
-            # self.model = PeftModel(self.model, lora_config)
             self.model = get_peft_model(self.model, lora_config)
             self.model.print_trainable_parameters()
 
@@ -101,11 +104,11 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
 
     def forward(self, input_ids, attention_mask=None, labels=None, return_hidden=False, preds=None):
         base_out = self.model(input_ids=input_ids, attention_mask=attention_mask)  # torch.Size([9, 512, 4096])
-        print(f"base_out.last_hidden_state.shape --> {base_out.last_hidden_state.shape}")
+        # print(f"base_out.last_hidden_state.shape --> {base_out.last_hidden_state.shape}")
         sentence_embeddings = self.average_pool(base_out.last_hidden_state, attention_mask)  # torch.Size([9, 4096])
-        print(f"sentence_embeddings.shape --> {sentence_embeddings.shape}")
+        # print(f"sentence_embeddings.shape --> {sentence_embeddings.shape}")
         logits = self.head(sentence_embeddings)  # torch.Size([9, 7])
-        print(f"logits.shape --> {logits.shape}")
+        # print(f"logits.shape --> {logits.shape}")
 
         loss = self.loss_func(logits, labels)
 
