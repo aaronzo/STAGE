@@ -1,4 +1,4 @@
-for seed in 3, 12, 42, 69
+for seed in 3 12 42 69
 do
     for dataset in 'cora' 'pubmed' 'arxiv_2023' 'ogbn-products' 'ogbn-arxiv' 
     do
