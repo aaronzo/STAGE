@@ -119,6 +119,8 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
             self.emb[batch_nodes] = sentence_embeddings.cpu().float().numpy().astype(np.float16)
             self.pred[batch_nodes] = logits.cpu().float().numpy().astype(np.float16)
 
+        if labels.shape[-1] == 1:
+            labels = labels.squeeze()
         loss = self.loss_func(logits, labels)
 
         output = TokenClassifierOutput(loss=loss, logits=logits)
