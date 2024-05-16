@@ -59,8 +59,8 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
             pretrained_repo, 
             config=self.config, 
             device_map='auto', 
-            load_in_8bit=True,
-            # torch_dtype=torch.bfloat16   # don't think this plays nice with PEFT
+            # load_in_8bit=True,
+            torch_dtype=torch.bfloat16
         )
         logger.info(f"Model dtype --> {self.model.dtype}")
         if use_peft:
