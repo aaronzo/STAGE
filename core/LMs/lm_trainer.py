@@ -152,18 +152,24 @@ class LMTrainer():
     @time_logger
     @torch.no_grad()
     def eval_and_save(self):
-        emb = np.memmap(init_path(f"{self.ckpt_dir}.emb"),
+        pred = np.memmap(init_path(f"{self.ckpt_dir}.pred"),
                         dtype=np.float16,
                         mode='w+',
-                        shape=(self.num_nodes, self.feat_shrink if self.feat_shrink else 768))
-        pred = np.memmap(init_path(f"{self.ckpt_dir}.pred"),
-                         dtype=np.float16,
-                         mode='w+',
-                         shape=(self.num_nodes, self.n_labels))
+                        shape=(self.num_nodes, self.n_labels))
+        if not self.use_llm:
+            emb = np.memmap(init_path(f"{self.ckpt_dir}.emb"),
+                            dtype=np.float16,
+                            mode='w+',
+                            shape=(self.num_nodes, self.feat_shrink if self.feat_shrink else 768))
 
-        inf_model = BertClaInfModel(
-            self.model, emb, pred, feat_shrink=self.feat_shrink)
-        inf_model.eval()
+            inf_model = BertClaInfModel(
+                self.model, emb, pred, feat_shrink=self.feat_shrink)
+            
+        else:
+            inf_model = self.model
+            self.model.eval()  # this should be enough, if not
+            # self.model.forward = torch.no_grad(self.model.forward)
+
         inference_args = TrainingArguments(
             output_dir=self.output_dir,
             do_train=False,
@@ -175,7 +181,11 @@ class LMTrainer():
         )
 
         trainer = Trainer(model=inf_model, args=inference_args)
-        trainer.predict(self.inf_dataset)
+        prediction_output = trainer.predict(self.inf_dataset)
+        pred[:] = prediction_output.predictions
+    
+        # this logic is horrible but im scared to change:
+
         if "ogbn" in self.dataset_name:
             from ogb.nodeproppred import Evaluator
             _evaluator = Evaluator(name=self.dataset_name)

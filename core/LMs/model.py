@@ -112,15 +112,25 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
 
         loss = self.loss_func(logits, labels)
 
+        output = TokenClassifierOutput(loss=loss, logits=logits)
+        if return_hidden:
+            return output, sentence_embeddings
 
-        return TokenClassifierOutput(loss=loss, logits=logits)
+        return output
 
         # if return_hidden:
         #     sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
         #     return logits, sentence_embeddings
         # else:
         #     return logits
-        
+
+    @torch.no_grad()
+    def emb(self, input_ids, attention_mask=None):
+        base_out = self.model(input_ids=input_ids, attention_mask=attention_mask)  # torch.Size([9, 512, 4096])
+        # print(f"base_out.last_hidden_state.shape --> {base_out.last_hidden_state.shape}")
+        sentence_embeddings = self.average_pool(base_out.last_hidden_state, attention_mask)  # torch.Size([9, 4096])
+        return sentence_embeddings.detach().cpu().numpy()
+
 
 class BertClassifier(PreTrainedModel):
     def __init__(self, model, n_labels, dropout=0.0, seed=0, cla_bias=True, feat_shrink=''):
@@ -191,7 +201,7 @@ class BertClaInfModel(PreTrainedModel):
         emb = bert_outputs['hidden_states'][-1]
         # Use CLS Emb as sentence emb.
         cls_token_emb = emb.permute(1, 0, 2)[0]
-        if self.feat_shrink:
+        if self.feat_shrink:    
             cls_token_emb = self.bert_classifier.feat_shrink_layer(
                 cls_token_emb)
         logits = self.bert_classifier.classifier(cls_token_emb)
