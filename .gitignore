@@ -68,3 +68,4 @@ results/
 output/
 prt_lm/
 .vscode/
+*.out
