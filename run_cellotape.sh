@@ -1,7 +1,14 @@
-for dataset in 'ogbn-arxiv' 'ogbn-products' 'cora' 'pubmed' 'arxiv_2023'
+for seed in 3, 12, 42, 69
 do
-    for lm_model in 'Alibaba-NLP/gte-Qwen1.5-7B-instruct' 'Salesforce/SFR-Embedding-Mistral'
+    for dataset in 'ogbn-arxiv' 'ogbn-products' 'cora' 'pubmed' 'arxiv_2023'
     do
-        python -m core.trainEnsemble gnn.train.feature_type TA dataset ${dataset} seed 42 lm.model.name ${lm_model} #| tee ${dataset}_${lm_model}_ta.out
+        for lm_model in 'McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp' 'Alibaba-NLP/gte-Qwen1.5-7B-instruct' 'Salesforce/SFR-Embedding-Mistral'
+        do
+            echo "---------------------------------------------------------------------------------"
+            echo "Running pipeline for dataset '$dataset' seed '$seed' LM '$lm_model'"
+            echo "---------------------------------------------------------------------------------"
+
+            python -m core.trainEnsemble gnn.train.feature_type TA_P dataset ${dataset} seed ${seed} lm.model.name ${lm_model} #| tee ${dataset}_${lm_model}_ta.out
+        done
     done
 done
