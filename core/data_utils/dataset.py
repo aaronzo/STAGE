@@ -79,7 +79,7 @@ class Dataset(torch.utils.data.Dataset):
             self.num_nodes = len(self)
 
     def __getitem__(self, idx):
-        item = {key: torch.tensor(val[idx])
+        item = {key: val[idx].clone().detach()   # val[idx].clone().detach()   # torch.tensor(val[idx])
                 for key, val in self.encodings.items()}
         item['node_id'] = idx
         if hasattr(self, "labels"):
