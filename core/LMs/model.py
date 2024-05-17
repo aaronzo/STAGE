@@ -112,7 +112,9 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
         logits = self.head(sentence_embeddings)  # torch.Size([9, 7])
         # print(f"logits.shape --> {logits.shape}")
 
-        batch_nodes = node_id.cpu().numpy()
+        if node_id is not None:
+            batch_nodes = node_id.cpu().numpy()
+
         if self.emb is not None:
             # Save embeddings to disk (memmap)
             # upcast `bfloat16` tensor using `.float()` -> https://stackoverflow.com/questions/78128662/converting-pytorch-bfloat16-tensors-to-numpy-throws-typeerror
@@ -122,9 +124,12 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
             # Save prediction to disk (memmap)
             self.pred[batch_nodes] = logits.cpu().float().numpy().astype(np.float16)
 
-        if labels.shape[-1] == 1:
-            labels = labels.squeeze()
-        loss = self.loss_func(logits, labels)
+        if labels:
+            if labels.shape[-1] == 1:
+                labels = labels.squeeze()
+            loss = self.loss_func(logits, labels)
+        else:
+            loss = None
 
         output = TokenClassifierOutput(loss=loss, logits=logits)
 
