@@ -15,13 +15,13 @@ python -m core.trainGNN \
 # !! Note that this was not done on a subset. Hyperparams in appendix B of paper
 
 python -m core.trainGNN \
-    dataset ogbn-arxiv \
+    dataset ogbn-products \
     gnn.model.name SIGN \
     gnn.model.hidden_dim 512 \
     gnn.model.num_layers 3 \
-    gnn.diffusion.s 0 \
-    gnn.diffusion.p 0 \
-    gnn.diffusion.t 1 \
+    gnn.diffusion.s 5 \
+    gnn.diffusion.p 3 \
+    gnn.diffusion.t 0 \
     gnn.train.feature_type ogb \
     gnn.train.wd 0.0001 \
     gnn.train.dropout 0.5 \
