@@ -77,10 +77,10 @@ def get_evaluator(dataset_name: str, preds: np.ndarray, labels: np.ndarray):
     evaluator = cls(name=dataset_name)
 
     def _eval_fn(idx):
-        out = evaluator.eval({
-            "y_true": torch.tensor(labels[idx]).view(-1, 1),
-            "y_pred": torch.tensor(np.argmax(preds[idx], -1)).view(-1, 1),
-        })
+        out = evaluator.eval(
+            {"y_true": torch.tensor(labels[idx]).view(-1, 1),
+            "y_pred": torch.tensor(np.argmax(preds[idx], -1)).view(-1, 1),}
+        )
         return out["acc"]
     
     return _eval_fn
