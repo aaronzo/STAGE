@@ -6,6 +6,7 @@ import numpy as np
 from torch.utils.data import Subset
 from core.data_utils.dataset import Dataset
 from transformers import AutoTokenizer, TrainingArguments, Trainer, IntervalStrategy
+from transformers.modeling_outputs import TokenClassifierOutput
 from core.utils import time_logger, init_path
 from core.LMs.utils import *
 import gc
@@ -26,32 +27,31 @@ class JointLmmGnnModel(nn.Module):
         self.gnn_model = prediction_gnn_model
         self.num_classes = num_classes
         self.loss_func = loss_func
+        self.pred = None
 
-    def forward(self, input_ids, attention_mask=None, labels=None, edge_index=None):
+    def forward(self, input_ids, attention_mask=None, labels=None, edge_index=None, adj_t=None, node_id=None):
         _, embedding = self.llm_model(input_ids, attention_mask=attention_mask, return_hidden=True)
         # adj_t vs edge_index resolve later
-        logits = self.gnn_model(embedding, edge_index)
-        loss = None
-        if labels is not None:
-            self.loss_func(logits.view(-1, self.num_classes), labels.view(-1))
-        if loss is None:
-            return dict(logits=logits)
-        return dict(loss=loss, logits=logits)
-    
-    # I think i can just use the return_hidden=True
-    # @staticmethod
-    # def last_token_pool(last_hidden_state: torch.Tensor,
-    #                 attention_mask: torch.Tensor) -> torch.Tensor:
-    #     # or can we just call self.llm_model.forward()
-    #     left_padding = (attention_mask[:, -1].sum() == attention_mask.shape[0])
-    #     if left_padding:
-    #         return last_hidden_state[:, -1]
+        # embedding = embedding.float()
+        if edge_index is not None:
+            logits = self.gnn_model(embedding, edge_index)
+        else:
+            logits = self.gnn_model(embedding, adj_t)
 
-    #     sequence_lengths = attention_mask.sum(dim=1) - 1
-    #     return last_hidden_state[
-    #         torch.arange(last_hidden_state.shape[0], device=last_hidden_state.device),
-    #         sequence_lengths
-    #     ]
+        if node_id is not None:
+            batch_nodes = node_id.cpu().numpy()
+
+        if self.pred is not None:
+            # Save prediction to disk (memmap)
+            self.pred[batch_nodes] = logits.cpu().float().numpy().astype(np.float16)
+
+        if labels is not None:
+            # if labels.shape[-1] == 1:
+            #     labels = labels.squeeze()
+            loss = self.loss_func(logits.view(-1, self.num_classes), labels.view(-1))
+            return TokenClassifierOutput(loss=loss, logits=logits)
+        else:
+            return dict(logits=logits)
 
 
 class JointTrainer:
@@ -62,7 +62,6 @@ class JointTrainer:
         self.dataset_name = cfg.dataset
         self.device = cfg.device
         self.seed = cfg.seed
-        self.evaluator = get_evaluator(self.dataset_name)
         self.batch_size = cfg.lm.train.batch_size
         self.epochs = cfg.lm.train.epochs
         self.warmup_epochs = cfg.lm.train.warmup_epochs
@@ -70,6 +69,8 @@ class JointTrainer:
         self.eval_patience = cfg.lm.train.eval_patience
         self.grad_acc_steps = cfg.lm.train.grad_acc_steps
         self.weight_decay = cfg.lm.train.weight_decay
+        self.max_steps = cfg.lm.train.max_steps
+        self.logging_steps = cfg.logging_steps
 
         # -------- LM Settings --------
         # ! Use LM settings where they are shared, e.g. lm.train.lr, lm.train.epochs applies for both !
@@ -109,6 +110,7 @@ class JointTrainer:
         )
         self.num_nodes = self.dataset.num_nodes
         self.num_classes = self.dataset.num_classes
+        self.inf_dataset = self.dataset
 
         self.train_dataset = self.dataset.train_subset()
         self.val_dataset = self.dataset.val_subset()
@@ -116,6 +118,7 @@ class JointTrainer:
         
         # ---------- Init Sub Models -----------
         
+        print("Initializing LM and GNN models...")
         self._init_lm()
         self._init_gnn()
 
@@ -149,7 +152,7 @@ class JointTrainer:
         self.lm_model.config.attention_dropout = self.lm_att_dropout
 
         trainable_params = count_trainable_parameters(self.lm_model)
-        print(f"\nNumber of parameters: {trainable_params}")
+        print(f"\nNumber of LLM parameters: {trainable_params}")
 
     def _init_gnn(self):
         if self.gnn_model_name == "GCN":
@@ -180,12 +183,15 @@ class JointTrainer:
         # Define training parameters
         self.model.train()
         eq_batch_size = self.batch_size * 4
-        train_steps = self.num_nodes // eq_batch_size + 1
+        train_steps = self.max_steps if self.max_steps else self.num_nodes // eq_batch_size + 1
         eval_steps = self.eval_patience // eq_batch_size
         warmup_steps = int(self.warmup_epochs * train_steps)
 
+        print(f"Max steps: {train_steps}, Warmup steps: {warmup_steps}")
+
         # Define Trainer
         args = TrainingArguments(
+            max_steps=train_steps,
             output_dir=self.output_dir,
             do_train=True,
             do_eval=True,
@@ -202,10 +208,12 @@ class JointTrainer:
             warmup_steps=warmup_steps,
             num_train_epochs=self.epochs,
             dataloader_num_workers=1,
-            fp16=True,
+            # fp16=True,
+            bf16=True,
             dataloader_drop_last=True,
+            logging_steps=self.logging_steps,
         )
-        self.trainer = Trainer(
+        self.trainer = CustomTrainer(  # CustomTrainer
             model=self.model,
             args=args,
             train_dataset=self.train_dataset,
@@ -216,8 +224,9 @@ class JointTrainer:
 
         # Train pre-trained model
         self.trainer.train()
-        torch.save(self.model.state_dict(), init_path(f"{self.ckpt_dir}.ckpt"))
-        print(f'Joint Model saved to {self.ckpt_dir}.ckpt')
+        # print('Saving model to disk...')
+        # torch.save(self.model.state_dict(), init_path(f"{self.ckpt_dir}.ckpt"))
+        # print(f'Joint Model saved to {self.ckpt_dir}.ckpt')
 
     @time_logger
     @torch.no_grad()
@@ -229,6 +238,7 @@ class JointTrainer:
     
         self.model.eval()  # this should be enough, if not:
         # self.model.forward = torch.no_grad(self.model.forward)
+        self.model.pred = pred
 
         inference_args = TrainingArguments(
             output_dir=self.output_dir,
@@ -237,12 +247,12 @@ class JointTrainer:
             per_device_eval_batch_size=self.batch_size*8,
             dataloader_drop_last=False,
             dataloader_num_workers=1,
-            fp16_full_eval=True,
+            # fp16_full_eval=True,
         )
 
         trainer = Trainer(model=self.model, args=inference_args)
+        print(f"Running inference...")
         prediction_outputs = trainer.predict(self.inf_dataset)
-        pred[:] = prediction_outputs
         labels = np.array(self.dataset.labels)
         eval = get_evaluator(self.dataset_name, pred, labels)
 
@@ -251,6 +261,9 @@ class JointTrainer:
         test_acc = eval(self.dataset.test_mask)
         print(
             f'[LM] TrainAcc: {train_acc:.4f}, ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
+        
+        print(f"Saved predictions to {self.ckpt_dir}.pred")
+        
         return {'TrainAcc': train_acc, 'ValAcc': val_acc, 'TestAcc': test_acc}
 
 
@@ -289,7 +302,8 @@ def preprocess_for_training(
 
     del data.x
     gc.collect()
-    num_nodes = len(X)
+    num_nodes = data.y.shape[0]
+    print(f"Num nodes: {num_nodes}")
 
     dataset = Dataset(
         X,
@@ -303,3 +317,39 @@ def preprocess_for_training(
         test_mask=data.test_mask,
     )
     return dataset
+
+
+import torch
+from torch_geometric.data import Data
+import torch_sparse
+from transformers import Trainer, TrainingArguments
+from torch.utils.data import DataLoader
+
+def custom_collate_fn(batch):
+    elem = batch[0]
+    collated_batch = {}
+    for key in elem:
+        if isinstance(elem[key], torch.Tensor):
+            collated_batch[key] = torch.stack([item[key] for item in batch], dim=0).to('cuda')
+        elif isinstance(elem[key], torch.sparse.Tensor) or isinstance(elem[key], torch_sparse.SparseTensor):
+            collated_batch[key] = batch[0][key].float().to('cuda')  # Keep sparse tensors in a list
+        else:
+            collated_batch[key] = [item[key] for item in batch]  # Handle other types, like masks or scalars
+    return Data(**collated_batch)
+
+
+class CustomTrainer(Trainer):
+    def get_train_dataloader(self):
+        if self.train_dataset is None:
+            raise ValueError("Trainer: training requires a train_dataset.")
+        
+        # Use the custom DataLoader for the training dataset
+        return DataLoader(self.train_dataset, batch_size=self.args.train_batch_size, collate_fn=custom_collate_fn)
+
+    def get_eval_dataloader(self, eval_dataset=None):
+        eval_dataset = eval_dataset if eval_dataset is not None else self.eval_dataset
+        if eval_dataset is None:
+            raise ValueError("Trainer: evaluation requires an eval_dataset.")
+        
+        # Use the custom DataLoader for the evaluation dataset
+        return DataLoader(eval_dataset, batch_size=self.args.eval_batch_size, collate_fn=custom_collate_fn)
