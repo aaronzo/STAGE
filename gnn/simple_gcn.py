@@ -1,21 +1,16 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import warnings
-import sys
 
 class LogisticRegression(nn.Module):    
-    def __init__(self, *, in_channels: int, out_channels: int, dropout: float, **kw) -> None:
+    def __init__(self, *, in_channels: int, out_channels: int, **kw) -> None:
         if kw:
-            warnings.warn(f"Keyworks passed to {self.__class__.__name__} were ignored: {kw}", stacklevel=0)
+            warnings.warn(f"Keywords passed to {self.__class__.__name__} were ignored: {kw}")
         super(LogisticRegression, self).__init__()
-        self.lin = nn.Linear(in_channels, out_channels)
-        self.dropout = dropout
+        self.W = nn.Linear(in_channels, out_channels)
 
     def forward(self, x: torch.Tensor, *_) -> torch.Tensor:
-        x = F.dropout(x, p=self.dropout, training=self.training)
-        return self.lin(x)
-        # skip applying softmax as this is done via cross-entropy loss
+        return self.W(x)
     
     def reset_parameters(self) -> None:
-        self.lin.reset_parameters()
+        self.W.reset_parameters()

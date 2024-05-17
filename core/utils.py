@@ -1,8 +1,10 @@
+from typing import *
 import os
 import numpy as np
 import time
 import datetime
 import pytz
+import functools as ft
 
 
 def init_random_state(seed=0):
@@ -83,3 +85,15 @@ def time_logger(func):
         return ret
 
     return wrapper
+
+
+# * ============================= Other =============================
+
+ClassType = TypeVar('ClassType', bound=Type[object])
+
+def partially_initialized(cls: Type[ClassType], **partial_kw: Any) -> Callable[..., ClassType]:
+    def build_cls(*a, **kw) -> ClassType:
+        partial_kw.update(kw)
+        return cls(*a, **partial_kw)
+
+    return build_cls

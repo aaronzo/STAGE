@@ -63,6 +63,22 @@ def set_cfg(cfg):
     # Dropout rate
     cfg.gnn.train.dropout = 0.0
 
+    cfg.gnn.diffusion = CN()
+    # Simple GCN degree
+    cfg.gnn.diffusion.k = 2
+    # SIGN simple diffusion
+    cfg.gnn.diffusion.s = 5
+    # SIGN PPR diffusion
+    cfg.gnn.diffusion.p = 3
+    # SIGN triangle diffusion
+    cfg.gnn.diffusion.t = 0
+    # SIGN simple diffusion normalization
+    cfg.gnn.diffusion.s_norm = "gcn"
+    # SIGN PPR diffusion normalization
+    cfg.gnn.diffusion.p_norm = "rw"
+    # SIGN triangle diffusion normalization
+    cfg.gnn.diffusion.t_norm = "rw"
+
     # ------------------------------------------------------------------------ #
     # LM Model options
     # ------------------------------------------------------------------------ #

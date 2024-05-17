@@ -4,7 +4,7 @@ import numpy as np
 from typing import TYPE_CHECKING, Iterator, Callable, Union, Literal, Tuple
 import graphblas as gb
 from itertools import chain
-from gnn import _utils
+from gnn._utils import eval_expr, transpose_if, torch_to_graphblas, recover_triad_count
 import functools as ft
 from abc import ABCMeta, abstractmethod
 from pathlib import Path
@@ -12,17 +12,22 @@ import torch
 
 if TYPE_CHECKING:
     from gnn._typing import _GraphblasModule as gb
+    from numpy.typing import DTypeLike
 
 
 @ft.lru_cache(maxsize=1)
 def rw_norm(adj: gb.Matrix, *, copy: bool = True) -> gb.Matrix:
-    return _utils.eval(adj / adj.reduce_rowwise(), out=None if copy else adj)
+    return eval_expr(adj / adj.reduce_rowwise(), out=None if copy else adj)
 
 
 @ft.lru_cache(maxsize=1)
 def gcn_norm(adj: gb.Matrix, *, copy: bool = True) -> gb.Matrix:
+    if copy:
+        adj = adj.dup()
+    eye = gb.Vector.from_scalar(1.0, adj.shape[0], dtype=adj.dtype).diag()
+    adj(mask=gb.select.diag(adj).S) << adj + eye
     sqrt_deg = adj.reduce_rowwise().apply(gb.unary.sqrt)
-    return _utils.eval(sqrt_deg * adj * sqrt_deg, out=None if copy else adj)
+    return eval_expr(sqrt_deg * adj * sqrt_deg, adj)
 
 
 def norm(adj: gb.Matrix, method: Union[Literal["gcn"], Literal["rw"]], *, copy: bool = True) -> gb.Matrix:
@@ -69,11 +74,12 @@ def appnp(adj: gb.Matrix, alpha: float = 0.15, iterations: int = 50) -> np.ndarr
     return diffuse_fn
 
 
-def triangle(adj: gb.Matrix, directed: bool = True) -> gb.Matrix:
-    A = gb.select.offdiag(adj).S.new(dtype=adj.dtype)
-    mask = gb.unary.identity(A.T).S if directed else A.S
-    A(mask=mask) << A @ A
-    return A
+def triangle(adj: gb.Matrix, directed: bool = True, intermediate_int_type: "DTypeLike" = np.int32) -> gb.Matrix:
+    A = gb.unary.one(gb.select.offdiag(adj)).new(dtype=intermediate_int_type)
+    # could be better to transpose A
+    A(mask=gb.select.offdiag(A).S, accum=gb.binary.plus) << transpose_if(directed, (-2 * A @ A))
+    res = gb.select.valuegt(recover_triad_count(A)).new(dtype=adj.dtype)
+    return res
 
 
 def diffuse_powers(diffuse: Callable[[np.ndarray], np.ndarray], X: np.ndarray,  k: int) -> Iterator[np.ndarray]:
@@ -103,7 +109,7 @@ class Diffusion(metaclass=ABCMeta):
             if path.exists() and path.is_file():
                 return torch.from_numpy(self._load_emb(path, shape=shape)).to(X.dtype)
         
-        adj = _utils.torch_to_graphblas(edge_index, num_nodes=X.shape[0])
+        adj = torch_to_graphblas(edge_index, num_nodes=X.shape[0])
         X_np = X.detach().cpu().numpy()
         out = self.propagate(adj, X_np)
         if cache_location is not None:
@@ -170,12 +176,15 @@ class SIGNDiffusion(Diffusion):
         ops = []
         print("PROPAGATING SIGN")
         if (s := self.s):
+            # paper unclear on norm used
             simple_diffuser = simple(norm(adj, method=self.s_norm))
             ops.append(diffuse_powers(simple_diffuser, X, s))
         if (p := self.p):
+            # paper unclear on norm used
             ppr_diffuser = appnp(norm(adj, method=self.p_norm))
             ops.append(diffuse_powers(ppr_diffuser, X, p))
         if (t := self.t):
+            # paper mentions rw norm in the appendix
             adj_triangle = triangle(adj, directed=False)
             triangle_diffuser = simple(norm(adj_triangle, method=self.t_norm, copy=False))
             ops.append(diffuse_powers(triangle_diffuser, X, t))

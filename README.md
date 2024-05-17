@@ -124,3 +124,9 @@ This repository also provides the checkpoints for all trained models `(*.ckpt)` 
 
 ### arxiv-2023 dataset
 The codes for constructing and processing the `arxiv-2023` dataset are provided [here](https://github.com/XiaoxinHe/arxiv_2023).
+
+
+## Running Tests:
+```python
+PYTHONPATH=. pytest tests/
+```

@@ -1,8 +1,9 @@
-from typing import Protocol, Any, cast
+from typing import Protocol
 
 import graphblas.binary
 import graphblas.core.matrix
 import graphblas.core.vector
+import graphblas.io
 import graphblas.select
 import graphblas.unary
 
@@ -14,3 +15,4 @@ class _GraphblasModule(Protocol):
     unary = graphblas.unary
     binary = graphblas.binary
     select = graphblas.select
+    io = graphblas.io

@@ -2,12 +2,12 @@ import torch
 from time import time
 import numpy as np
 
-from pathlib import Path
 from core.GNNs.gnn_utils import EarlyStopping
 from core.data_utils.load import load_data, load_gpt_preds
 from core.utils import time_logger
 from gnn.diffusion import SimpleGCNDiffusion, SIGNDiffusion
-import sys
+from core.utils import partially_initialized
+import gc
 
 LOG_FREQ = 10
 
@@ -76,24 +76,29 @@ class GNNTrainer():
             self.feature_type = 'ogb'
             features = data.x
 
+        diffuser = None
+        num_features = features.shape[1]
         if self.diffusion is not None:
-            # TODO params for diffusion
-
-            # print({k: getattr(data, k, None) for k in dir(data) if not k.startswith("_")}, file=sys.stderr)
             if self.diffusion == "SimpleGCN":
-                features = SimpleGCNDiffusion(3).propagate_torch(
-                    data.edge_index, data.x, cache_location=Path(f"diffusion/{self.dataset_name}/{self.diffusion}.emb")
-                )
+                k = cfg.gnn.diffusion.k
+                diffuser = SimpleGCNDiffusion(k)
+                features = diffuser.propagate_torch(data.edge_index, data.x)
             elif self.diffusion == "SIGN":
-                features = SIGNDiffusion(3, 3, 3).propagate_torch(
-                    data.edge_index, data.x, cache_location=Path(f"diffusion/{self.dataset_name}/{self.diffusion}.emb")
-                )
+                s = cfg.gnn.diffusion.s
+                p = cfg.gnn.diffusion.p
+                t = cfg.gnn.diffusion.t
+                s_norm = cfg.gnn.diffusion.s_norm
+                p_norm = cfg.gnn.diffusion.p_norm
+                t_norm = cfg.gnn.diffusion.t_norm
+                diffuser = SIGNDiffusion(s, p, t, s_norm=s_norm, p_norm=p_norm, t_norm=t_norm)
+                features = diffuser.propagate_torch(data.edge_index, data.x)
 
         self.features = features.to(self.device)
         self.data = data.to(self.device)
 
         if self.diffusion is not None:
-            self.data.edge_index = None  # save GPU mem
+            del self.data.edge_index
+            gc.collect()
 
         # ! Trainer init
         use_pred = self.feature_type == 'P'
@@ -111,12 +116,13 @@ class GNNTrainer():
             if self.diffusion == "SimpleGCN":
                 from gnn.simple_gcn import LogisticRegression as GNN
             elif self.diffusion == "SIGN":
-                from gnn.sign import MLP as GNN
+                from gnn.sign import InceptionMLP
+                GNN = partially_initialized(InceptionMLP, num_operators=diffuser.r)
             else:
                 raise ValueError(f"Invalid Diffusion provided: {self.diffusion}")
 
 
-        self.model = GNN(in_channels=self.hidden_dim*topk if use_pred else self.features.shape[1],
+        self.model = GNN(in_channels=self.hidden_dim*topk if use_pred else num_features,
                          hidden_channels=self.hidden_dim,
                          out_channels=self.num_classes,
                          num_layers=self.num_layers,

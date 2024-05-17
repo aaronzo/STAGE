@@ -11,3 +11,4 @@ numpy
 python-graphblas
 datasets
 accelerate
+pytest
