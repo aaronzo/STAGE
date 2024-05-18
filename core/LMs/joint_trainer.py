@@ -3,8 +3,9 @@ import torch.nn as nn
 from typing import *
 from core.data_utils.load import load_data
 import numpy as np
-from torch.utils.data import Subset
 from core.data_utils.dataset import Dataset
+from core.data_utils.dataloader import Collater
+from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, TrainingArguments, Trainer, IntervalStrategy
 from transformers.modeling_outputs import TokenClassifierOutput
 from core.utils import time_logger, init_path
@@ -319,37 +320,26 @@ def preprocess_for_training(
     return dataset
 
 
-import torch
-from torch_geometric.data import Data
-import torch_sparse
-from transformers import Trainer, TrainingArguments
-from torch.utils.data import DataLoader
-
-def custom_collate_fn(batch):
-    elem = batch[0]
-    collated_batch = {}
-    for key in elem:
-        if isinstance(elem[key], torch.Tensor):
-            collated_batch[key] = torch.stack([item[key] for item in batch], dim=0).to('cuda')
-        elif isinstance(elem[key], torch.sparse.Tensor) or isinstance(elem[key], torch_sparse.SparseTensor):
-            collated_batch[key] = batch[0][key].float().to('cuda')  # Keep sparse tensors in a list
-        else:
-            collated_batch[key] = [item[key] for item in batch]  # Handle other types, like masks or scalars
-    return Data(**collated_batch)
-
-
 class CustomTrainer(Trainer):
+    _exclude_keys = {"edge_index", "adj_t"}
+
     def get_train_dataloader(self):
         if self.train_dataset is None:
             raise ValueError("Trainer: training requires a train_dataset.")
-        
-        # Use the custom DataLoader for the training dataset
-        return DataLoader(self.train_dataset, batch_size=self.args.train_batch_size, collate_fn=custom_collate_fn)
+
+        return DataLoader(
+            self.train_dataset,
+            batch_size=self.args.train_batch_size,
+            collate_fn=Collater(exclude_keys=self._exclude_keys),
+        )
 
     def get_eval_dataloader(self, eval_dataset=None):
         eval_dataset = eval_dataset if eval_dataset is not None else self.eval_dataset
         if eval_dataset is None:
             raise ValueError("Trainer: evaluation requires an eval_dataset.")
-        
-        # Use the custom DataLoader for the evaluation dataset
-        return DataLoader(eval_dataset, batch_size=self.args.eval_batch_size, collate_fn=custom_collate_fn)
+
+        return DataLoader(
+            eval_dataset,
+            batch_size=self.args.eval_batch_size,
+            collate_fn=Collater(exclude_keys=self._exclude_keys),
+        )

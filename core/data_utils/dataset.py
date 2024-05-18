@@ -66,18 +66,22 @@ class Dataset(torch.utils.data.Dataset):
         test_mask=None,
     ):
         self.encodings = encodings
-        self.labels = labels
-        self.edge_index = edge_index
-        self.adj_t = adj_t
-        self.train_mask = train_mask 
-        self.val_mask = val_mask
-        self.test_mask = test_mask
-        self.num_nodes = num_nodes
-        self.num_classes = num_classes
-
-        if self.num_nodes is None:
-            self.num_nodes = len(self)
-
+        if labels is not None:
+            self.labels = labels
+        if edge_index is not None:
+            self.edge_index = edge_index
+        if adj_t is not None:
+            self.adj_t = adj_t
+        if train_mask is not None:
+            self.train_mask = train_mask 
+        if val_mask is not None:
+            self.val_mask = val_mask
+        if test_mask is not None:
+            self.test_mask = test_mask
+        if num_classes is not None:
+            self.num_classes = num_classes
+        self.num_nodes = len(self) if num_nodes is None else num_nodes
+        
     def __getitem__(self, idx):
         item = {key: torch.tensor(val[idx]).clone().detach()   # val[idx].clone().detach()   # torch.tensor(val[idx])
                 for key, val in self.encodings.items()}
@@ -95,14 +99,14 @@ class Dataset(torch.utils.data.Dataset):
         return len(self.encodings["input_ids"])
 
     def train_subset(self) -> Subset:
-        assert self.train_mask is not None
+        assert hasattr(self, "train_mask")
         return Subset(self, self.train_mask.nonzero().squeeze().tolist())
 
     def val_subset(self) -> Subset:
-        assert self.val_mask is not None
+        assert hasattr(self, "val_mask")
         return Subset(self, self.val_mask.nonzero().squeeze().tolist())
     
     def test_subset(self) -> Subset:
-        assert self.test_mask is not None
+        assert hasattr(self, "test_mask")
         return Subset(self, self.test_mask.nonzero().squeeze().tolist())
         
