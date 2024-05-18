@@ -63,6 +63,8 @@ def set_cfg(cfg):
     # Dropout rate
     cfg.gnn.train.dropout = 0.0
 
+    cfg.gnn.train.use_finetuned_embeddings = False
+
     cfg.gnn.diffusion = CN()
     # Simple GCN degree
     cfg.gnn.diffusion.k = 2
