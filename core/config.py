@@ -38,7 +38,7 @@ def set_cfg(cfg):
     # GNN model name
     cfg.gnn.model.name = 'GCN'
     # for ensembling across model types
-    cfg.gnn.ensemble_models = ['RevGAT', 'GCN', 'SAGE', 'MLP']
+    cfg.gnn.ensemble_models = ['GCN', 'RevGAT', 'SAGE', 'MLP']
     # Number of gnn layers
     cfg.gnn.model.num_layers = 4
     # Hidden size of the model
@@ -95,7 +95,7 @@ def set_cfg(cfg):
     # ------------------------------------------------------------------------ #
     cfg.lm.train = CN()
     #  Number of samples computed once per batch per device
-    cfg.lm.train.batch_size = 2
+    cfg.lm.train.batch_size = 8
     # Max number of train steps -- `None` will default to the number of training steps in the dataset
     cfg.lm.train.max_steps = None
     # Number of training steps for which the gradients should be accumulated
@@ -103,7 +103,7 @@ def set_cfg(cfg):
     # Base learning rate
     cfg.lm.train.lr = 2e-5
     # Maximal number of epochs
-    cfg.lm.train.epochs = 4
+    cfg.lm.train.epochs = 1
     # The number of warmup steps
     cfg.lm.train.warmup_epochs = 0.6
     # Number of update steps between two evaluations
@@ -120,7 +120,7 @@ def set_cfg(cfg):
     # If not, use the original text attributes (i.e., title and abstract)
     cfg.lm.train.use_gpt = False
 
-    cfg.logging_steps = 100
+    cfg.logging_steps = 10
 
     return cfg
 
