@@ -77,6 +77,7 @@ class LMTrainer():
             self.dataset, self.data.val_mask.nonzero().squeeze().tolist())
         self.test_dataset = torch.utils.data.Subset(
             self.dataset, self.data.test_mask.nonzero().squeeze().tolist())
+        
 
         # Define pretrained tokenizer and model
         if self.model_name in LLMS:
@@ -105,7 +106,7 @@ class LMTrainer():
 
         trainable_params = sum(p.numel()
                                for p in self.model.parameters() if p.requires_grad)
-        print(f"\nNumber of ptrainable arameters: {trainable_params}")
+        print(f"\nNumber of trainable parameters: {trainable_params}")
 
     @time_logger
     def train(self):
@@ -198,9 +199,9 @@ class LMTrainer():
         labels = np.array(self.dataset.labels)
         eval = get_evaluator(self.dataset_name, pred, labels)
 
-        train_acc = eval(self.dataset.train_mask)
-        val_acc = eval(self.dataset.val_mask)
-        test_acc = eval(self.dataset.test_mask)
+        train_acc = eval(self.data.train_mask)
+        val_acc = eval(self.data.val_mask)
+        test_acc = eval(self.data.test_mask)
 
         print(
             f'[LM] TrainAcc: {train_acc:.4f}, ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
