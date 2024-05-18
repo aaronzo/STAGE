@@ -111,10 +111,13 @@ class LMTrainer():
     def train(self):
 
         # Define training parameters
-        eq_batch_size = self.batch_size * 4
-        train_steps = self.max_steps if self.max_steps else self.num_nodes // eq_batch_size + 1
-        eval_steps = self.eval_patience // eq_batch_size
+        # eq_batch_size = self.batch_size * 4
+        train_steps = self.max_steps if self.max_steps else self.num_nodes // self.batch_size
+        eval_steps = self.eval_patience // self.batch_size
         warmup_steps = int(self.warmup_epochs * train_steps)
+
+        print(f"Max steps: {train_steps}, Warmup steps: {warmup_steps}")
+        print(f"Logging every {self.logging_steps} steps\n")
 
         # Define Trainer
         args = TrainingArguments(
@@ -151,9 +154,9 @@ class LMTrainer():
 
         # Train pre-trained model
         self.trainer.train()
-        print('Saving model to disk...')
-        torch.save(self.model.state_dict(), init_path(f"{self.ckpt_dir}.ckpt"))
-        print(f'\nLM saved to {self.ckpt_dir}.ckpt\n')
+        # print('Saving model to disk...')
+        # torch.save(self.model.state_dict(), init_path(f"{self.ckpt_dir}.ckpt"))
+        # print(f'\nLM saved to {self.ckpt_dir}.ckpt\n')
 
     @time_logger
     @torch.no_grad()
