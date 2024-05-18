@@ -1,7 +1,8 @@
 torchVersion=${TORCH_VERSION:-2.2.1}
 cudaVersion=${CUDA_VERSION:-cu121}
 
-conda create -n cellotape python=3.8 -y conda activate cellotape
+# conda create -n cellotape python=3.8 -y#
+# conda activate cellotape
 pip install packaging wheel
 pip install -r requirements.txt
 pip install flash_attn

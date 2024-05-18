@@ -9,6 +9,4 @@ yacs
 ogb
 numpy
 python-graphblas
-datasets
 accelerate
-pytest
