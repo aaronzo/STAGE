@@ -124,7 +124,7 @@ class SalesforceEmbeddingMistralClassifier(nn.Module):
             # Save prediction to disk (memmap)
             self.pred[batch_nodes] = logits.cpu().float().numpy().astype(np.float16)
 
-        if labels:
+        if labels is not None:
             if labels.shape[-1] == 1:
                 labels = labels.squeeze()
             loss = self.loss_func(logits, labels)
