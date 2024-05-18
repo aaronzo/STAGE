@@ -52,8 +52,12 @@ class GNNTrainer():
             if cfg.gnn.train.use_finetuned_embeddings:
                 LM_emb_path = f'prt_lm_finetuned/{self.dataset_name}/Salesforce/SFR-Embedding-Mistral-seed{self.seed}.emb'
                 print(f"Using fine-tuned LM embeddings!!")
-            else:
+            elif cfg.lm.task.descriptions !='default':
+                LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-{cfg.lm.task.descriptions}-seedNone-dim{self.embedding_dim}.emb"
+            elif cfg.lm.task.descriptions =='default':
                 LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seedNone-dim{self.embedding_dim}.emb"
+            else:
+                raise ValueError(f"Invalid LM task: {cfg.lm.task.descriptions}")
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
                 np.memmap(LM_emb_path, mode='r',
