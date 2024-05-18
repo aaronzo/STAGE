@@ -51,6 +51,7 @@ coverage.xml
 # Output
 *.txt
 !requirements.txt
+!requirements-*.txt
 
 settings.json
 

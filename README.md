@@ -4,26 +4,22 @@
 <img src="./overview.svg">
 
 ## Python environment setup with Conda
+1. Create a Python 3.8 environment, with conda or otherwise:
 ```bash
-torchVersion=${TORCH_VERSION:-2.2.1}
-cudaVersion=${CUDA_VERSION:-cu121}
-
-conda create -n cellotape python=3.8 -y conda activate cellotape
-pip install packaging wheel
-pip install -r requirements.txt
-pip install flash_attn
-pip install torch_geometric==2.5.3
-# if you install a different version of torch and/or CUDA, 
-# you'll need to modify the below cmds
-# check torch version by running `import torch; print(torch.__version__)`
-# check CUDA version by running `nvidia-smi`
-pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${torchVersion}+${cudaVersion}.html
-pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${torchVersion}+${cudaVersion}.html
-pip install dgl -f https://data.dgl.ai/wheels/${cudaVersion}/repo.html
-pip install -i https://pypi.org/simple/ bitsandbytes
+conda create -n cellotape python=3.8 -y
+conda activate cellotape
+```
+2. Install dependencies:
+```bash
+bash ./setup.sh
 ```
 you must have the cuda toolkit & driver installed for the cuda version you use and set the CUDA_HOME variable
 
+## Download all artefacts
+You must have `unzip` installed (`sudo apt install unzip`)
+```bash
+bash ./download_scripts/download_all.sh
+```
 
 ## 1. Download TAG datasets
 
