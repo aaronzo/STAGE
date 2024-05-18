@@ -49,7 +49,11 @@ class GNNTrainer():
         elif self.feature_type == 'TA':
             print("Loading pretrained LM features (title and abstract) ...")
             # NOTE: seed=None only applies to pretrained model embeddings. For fine-tuned models this would be a data leak
-            LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seedNone-dim{self.embedding_dim}.emb"
+            if cfg.gnn.train.use_finetuned_embeddings:
+                LM_emb_path = f'prt_lm_finetuned/{self.dataset_name}/Salesforce/SFR-Embedding-Mistral-seed{self.seed}.emb'
+                print(f"Using fine-tuned LM embeddings!!")
+            else:
+                LM_emb_path = f"prt_lm/{self.dataset_name}/{self.lm_model_name}-seedNone-dim{self.embedding_dim}.emb"
             print(f"LM_emb_path: {LM_emb_path}")
             features = torch.from_numpy(np.array(
                 np.memmap(LM_emb_path, mode='r',
