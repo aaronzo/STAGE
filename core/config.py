@@ -4,6 +4,7 @@ from yacs.config import CfgNode as CN
 
 
 def set_cfg(cfg):
+    cfg.results_file = ""
 
     # ------------------------------------------------------------------------ #
     # Basic options
@@ -68,12 +69,13 @@ def set_cfg(cfg):
     cfg.gnn.diffusion = CN()
     # Simple GCN degree
     cfg.gnn.diffusion.k = 2
-    # SIGN simple diffusion
-    cfg.gnn.diffusion.s = 5
-    # SIGN PPR diffusion
-    cfg.gnn.diffusion.p = 3
-    # SIGN triangle diffusion
-    cfg.gnn.diffusion.t = 0
+    # reduce dim for Simple GCN
+    cfg.gnn.diffusion.svd = True
+    # SIGN diffusion
+    cfg.gnn.diffusion.spt = 530
+    # whether to always use symmetric normalization
+    cfg.gnn.diffusion.sym = False
+
     # SIGN simple diffusion normalization
     cfg.gnn.diffusion.s_norm = "gcn"
     # SIGN PPR diffusion normalization

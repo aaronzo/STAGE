@@ -22,11 +22,11 @@ class InceptionMLP(nn.Module):
             warnings.warn(f"Keywords passed to {self.__class__.__name__} were ignored: {kw}")
 
         self.dropout = dropout
-        self.in_channels_per_operator = in_channels
+        self.in_channels_per_operator = in_channels // num_operators
         self.num_operators = num_operators
 
         self.inception_lins = nn.ModuleList(
-            [nn.Linear(in_channels, hidden_channels) for _ in range(num_operators)]
+            [nn.Linear(self.in_channels_per_operator, hidden_channels) for _ in range(num_operators)]
         )
         self.inception_bns = nn.ModuleList(
             [nn.BatchNorm1d(hidden_channels) for _ in range(num_operators)]

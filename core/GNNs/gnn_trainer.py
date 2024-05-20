@@ -5,7 +5,6 @@ import numpy as np
 from core.GNNs.gnn_utils import EarlyStopping
 from core.data_utils.load import load_data, load_gpt_preds
 from core.utils import time_logger
-from gnn.diffusion import SimpleGCNDiffusion, SIGNDiffusion
 from core.utils import partially_initialized
 import gc
 
@@ -15,6 +14,9 @@ LOG_FREQ = 10
 class GNNTrainer():
 
     def __init__(self, cfg, feature_type):
+        self.results_file = cfg.results_file
+        self.INFO = {}
+
         self.seed = cfg.seed
         self.device = cfg.device
         self.dataset_name = cfg.dataset
@@ -29,7 +31,7 @@ class GNNTrainer():
 
         self.embedding_dim = cfg.embedding_dim
 
-        self.diffusion = None
+        self.diffusion = self.diffusion_repr = None
         if self.gnn_model_name in {"SimpleGCN", "SIGN"}:
             self.diffusion = self.gnn_model_name
 
@@ -78,29 +80,41 @@ class GNNTrainer():
         elif self.feature_type == 'P':
             print("Loading top-k prediction features ...")
             features = load_gpt_preds(self.dataset_name, topk)
+        elif self.diffusion is not None:
+            self.feature_type = "diffusion"
         else:
             print(
                 f'Feature type {self.feature_type} not supported. Loading OGB features...')
             self.feature_type = 'ogb'
             features = data.x
 
-        diffuser = None
-        num_features = features.shape[1]
         if self.diffusion is not None:
+            if cfg.gnn.diffusion.svd:
+                self.embedding_dim = 512
+
             if self.diffusion == "SimpleGCN":
                 k = cfg.gnn.diffusion.k
-                diffuser = SimpleGCNDiffusion(k)
-                features = diffuser.propagate_torch(data.edge_index, data.x)
+                sgc_path = f"sgc/{self.dataset_name}/{self.lm_model_name}-SGC_{k}-dim{self.embedding_dim}.emb"
+                features = torch.from_numpy(np.array(
+                    np.memmap(sgc_path, mode='r',
+                            dtype=np.float32,
+                            shape=(self.num_nodes, self.embedding_dim)))
+                ).to(torch.float32)
+                self.diffusion_repr = self.diffusion + f"_{k}"
+                   
             elif self.diffusion == "SIGN":
-                s = cfg.gnn.diffusion.s
-                p = cfg.gnn.diffusion.p
-                t = cfg.gnn.diffusion.t
-                s_norm = cfg.gnn.diffusion.s_norm
-                p_norm = cfg.gnn.diffusion.p_norm
-                t_norm = cfg.gnn.diffusion.t_norm
-                diffuser = SIGNDiffusion(s, p, t, s_norm=s_norm, p_norm=p_norm, t_norm=t_norm)
-                features = diffuser.propagate_torch(data.edge_index, data.x)
+                s, p, t, *_ = [int(c) for c in str(cfg.gnn.diffusion.spt)]
+                dim = self.embedding_dim * (s+p+t)
+                sym = "sym" if cfg.gnn.diffusion.sym else ""
+                sign_path = f"sign/{self.dataset_name}/{self.lm_model_name}-SIGN_{s}{p}{t}{sym}-dim{dim}.emb"
+                features = torch.from_numpy(np.array(
+                    np.memmap(sign_path, mode='r',
+                            dtype=np.float32,
+                            shape=(self.num_nodes, dim)))
+                ).to(torch.float32)
+                self.diffusion_repr = self.diffusion + f"_{s}{p}{t}{sym}"
 
+        num_features = features.shape[1]
         self.features = features.to(self.device)
         self.data = data.to(self.device)
 
@@ -125,7 +139,7 @@ class GNNTrainer():
                 from gnn.simple_gcn import LogisticRegression as GNN
             elif self.diffusion == "SIGN":
                 from gnn.sign import InceptionMLP
-                GNN = partially_initialized(InceptionMLP, num_operators=diffuser.r)
+                GNN = partially_initialized(InceptionMLP, num_operators=s+p+t)
             else:
                 raise ValueError(f"Invalid Diffusion provided: {self.diffusion}")
 
@@ -155,6 +169,11 @@ class GNNTrainer():
             {"y_pred": pred.argmax(dim=-1, keepdim=True),
              "y_true": labels.view(-1, 1)}
         )["acc"]
+
+        self.INFO["num_params"] = trainable_params
+        self.INFO["dataset"] = self.dataset_name
+        self.INFO["gnn"] = self.gnn_model_name if not self.diffusion else self.diffusion_repr
+        self.INFO["lm"] = self.lm_model_name
 
     def _forward(self, x, edge_index):
         logits = self.model(x, edge_index)  # small-graph
@@ -215,4 +234,12 @@ class GNNTrainer():
         print(
             f'GNN [{self.gnn_model_name} + {self.feature_type}] ValAcc: {val_acc:.4f}, TestAcc: {test_acc:.4f}\n')
         res = {'val_acc': val_acc, 'test_acc': test_acc}
+        self.INFO["val_acc"] = val_acc
+        self.INFO["test_acc"] = test_acc
+        import json
+        print(">>>EXPERIMENT SUMMARY<<<:", json.dumps(self.INFO))
+        if self.results_file:
+            with open(self.results_file, 'a') as f:
+                f.write(json.dumps(self.INFO) + "\n")
+
         return logits, res

@@ -74,4 +74,8 @@ output/
 prt_lm
 tmp_prt_lm
 .vscode
-
+prt_lm_finetuned
+sign/
+sgc/
+svd/
+results.zip
