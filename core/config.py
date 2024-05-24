@@ -83,6 +83,8 @@ def set_cfg(cfg):
     # SIGN triangle diffusion normalization
     cfg.gnn.diffusion.t_norm = "rw"
 
+    cfg.gnn.diffusion.tag = ""
+
     # ------------------------------------------------------------------------ #
     # LM Model options
     # ------------------------------------------------------------------------ #

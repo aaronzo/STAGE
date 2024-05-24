@@ -1,5 +1,5 @@
 import torch
-from time import time
+from time import time, perf_counter
 import numpy as np
 
 from core.GNNs.gnn_utils import EarlyStopping
@@ -91,10 +91,12 @@ class GNNTrainer():
         if self.diffusion is not None:
             if cfg.gnn.diffusion.svd:
                 self.embedding_dim = 512
+            tag = cfg.gnn.diffusion.tag
+            self.INFO["tag"] = tag
 
             if self.diffusion == "SimpleGCN":
                 k = cfg.gnn.diffusion.k
-                sgc_path = f"sgc/{self.dataset_name}/{self.lm_model_name}-SGC_{k}-dim{self.embedding_dim}.emb"
+                sgc_path = f"sgc/{self.dataset_name}/{self.lm_model_name}-SGC_{k}-dim{self.embedding_dim}{tag}.emb"
                 features = torch.from_numpy(np.array(
                     np.memmap(sgc_path, mode='r',
                             dtype=np.float32,
@@ -106,7 +108,7 @@ class GNNTrainer():
                 s, p, t, *_ = [int(c) for c in str(cfg.gnn.diffusion.spt)]
                 dim = self.embedding_dim * (s+p+t)
                 sym = "sym" if cfg.gnn.diffusion.sym else ""
-                sign_path = f"sign/{self.dataset_name}/{self.lm_model_name}-SIGN_{s}{p}{t}{sym}-dim{dim}.emb"
+                sign_path = f"sign/{self.dataset_name}/{self.lm_model_name}-SIGN_{s}{p}{t}{sym}-dim{dim}{tag}.emb"
                 features = torch.from_numpy(np.array(
                     np.memmap(sign_path, mode='r',
                             dtype=np.float32,
@@ -174,6 +176,7 @@ class GNNTrainer():
         self.INFO["dataset"] = self.dataset_name
         self.INFO["gnn"] = self.gnn_model_name if not self.diffusion else self.diffusion_repr
         self.INFO["lm"] = self.lm_model_name
+        self.INFO["seed"] = self.seed
 
     def _forward(self, x, edge_index):
         logits = self.model(x, edge_index)  # small-graph
@@ -207,6 +210,7 @@ class GNNTrainer():
     @time_logger
     def train(self):
         # ! Training
+        start_time = perf_counter()
         for epoch in range(self.epochs):
             t0, es_str = time(), ''
             loss, train_acc = self._train()
@@ -225,6 +229,7 @@ class GNNTrainer():
         if self.stopper is not None:
             self.model.load_state_dict(torch.load(self.stopper.path))
 
+        self.training_time = perf_counter() - start_time
         return self.model
 
     @ torch.no_grad()
@@ -236,6 +241,7 @@ class GNNTrainer():
         res = {'val_acc': val_acc, 'test_acc': test_acc}
         self.INFO["val_acc"] = val_acc
         self.INFO["test_acc"] = test_acc
+        self.INFO["training_time"] = self.training_time
         import json
         print(">>>EXPERIMENT SUMMARY<<<:", json.dumps(self.INFO))
         if self.results_file:

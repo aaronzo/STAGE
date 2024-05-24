@@ -1,11 +1,11 @@
 dataset=$1
 
-for lm_model in 'Salesforce/SFR-Embedding-Mistral' 'McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp' 'Alibaba-NLP/gte-Qwen1.5-7B-instruct'
+for lm_model in 'Salesforce/SFR-Embedding-Mistral' # 'McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp' 'Alibaba-NLP/gte-Qwen1.5-7B-instruct'
 do
-    results_file="./results/$dataset/sign-$lm_model.jsonl"
+    results_file="./results2/$dataset/sign-undirected-$lm_model.jsonl"
     mkdir -p `dirname $results_file`
 
-    for spt in "300" "301" "330" "421" "530"
+    for spt in "330" "421"
     do
         for seed in "3" "12" "42" "69"
         do  
@@ -19,6 +19,7 @@ do
             lm.model.name ${lm_model} \
             gnn.model.name SIGN \
             gnn.model.num_layers 3 \
+            gnn.diffusion.tag '-undirected' \
             gnn.diffusion.spt ${spt} \
             gnn.train.wd 0.0001 \
             gnn.train.dropout 0.5 \
@@ -34,6 +35,7 @@ do
             gnn.model.num_layers 3 \
             gnn.diffusion.spt ${spt} \
             gnn.diffusion.sym True \
+            gnn.diffusion.tag '-undirected' \
             gnn.train.wd 0.0001 \
             gnn.train.dropout 0.5 \
             gnn.train.lr 0.0001 \
